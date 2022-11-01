@@ -6,6 +6,14 @@ import bcrypt from 'bcryptjs';
 import { db } from '~/utils/db.server';
 import { createUserSession, signup } from '~/utils/session.server';
 
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  Button,
+} from '@chakra-ui/react';
+
 type ActionData = {
   error?: {
     message: string;
@@ -52,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (!user) {
     if (intent === 'signup') {
-      user = await signup(username, password);
+      user = await signup({ username, password });
       console.log('New user signup:', user);
       return createUserSession(user.id, `/projects`);
     } else {
@@ -119,22 +127,15 @@ export default function LoginForm() {
         {loginType === 'login' ? 'Login' : 'Sign up'}
       </p>
       <Form method="post">
-        <div className="flex flex-col">
-          <label className="flex flex-col">
+        <FormControl isInvalid={Boolean(error)}>
+          <FormLabel>
             Username:
-            <input
-              type="text"
-              name="username"
-              // className="form-input border border-gray-300 rounded-md"
-              className="border border-gray-300  rounded-md p-2 "
-            />
+            <Input type="text" name="username" />
             {error?.type === 'username' ? (
-              <p className="text-red-500" role="alert">
-                {error.message}
-              </p>
+              <FormErrorMessage>{error.message}</FormErrorMessage>
             ) : null}
-          </label>
-        </div>
+          </FormLabel>
+        </FormControl>
 
         <div className="flex flex-col">
           <label className="flex flex-col">
@@ -158,14 +159,21 @@ export default function LoginForm() {
           </p>
         ) : null}
 
-        <button
+        <Button
+          variant={'solid'}
+          width="240px"
+          h="48px"
+          borderRadius="24px"
+          _hover={{ backgroundColor: '#A8A4FF' }}
           type="submit"
           name="intent"
           value={loginType}
-          style={{ backgroundColor: '#635FC7' }}
+          style={{
+            backgroundColor: '#635FC7',
+          }}
         >
           Submit
-        </button>
+        </Button>
 
         {footerElement}
       </Form>

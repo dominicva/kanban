@@ -1,43 +1,77 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { Outlet, useLoaderData, Link, Form } from '@remix-run/react';
+import { redirect, json } from '@remix-run/node';
+import {
+  Outlet,
+  useLoaderData,
+  Link,
+  Form,
+  useActionData,
+} from '@remix-run/react';
 import { getAllProjects } from '~/models/project.server';
 import { getUser } from '~/utils/session.server';
+
+import {
+  Box,
+  Button,
+  FormLabel,
+  FormHelperText,
+  FormControl,
+  Heading,
+  HStack,
+  Center,
+  Input,
+} from '@chakra-ui/react';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request);
 
-  if (user) {
-    const projects = await getAllProjects(user.id);
-    return json({ projects, user });
-  } else {
-    return json({ projects: [], user: null });
+  if (!user) {
+    return redirect('/login');
   }
+
+  const projects = await getAllProjects(user.id);
+  return json({ projects, user });
+};
+
+export const action = async ({ request }: LoaderArgs) => {
+  // console.log('action');
+  // const formData = await request.formData();
+  // const intent = formData.get('intent');
+  // console.log('intent:', intent);
+
+  // if (intent === 'logout') {
+  return redirect('/logout');
+  // }
 };
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  console.log('actionData:', actionData);
 
   return (
     <div className="w-screen h-screen">
-      <div className="ml-64">
+      <Box className="ml-64">
         {user ? (
-          <div className="flex flex-col items-end mr-8">
-            <span className="text-2xl font-bold">{`Hi ${user.username}`}</span>
+          <FormControl className="flex flex-col items-end mr-8">
+            <FormHelperText>{`Hi ${user.username}`}</FormHelperText>
             <Form action="/logout" method="post">
-              <button type="submit">Logout</button>
+              {/* <Input name="intent" value="logout" type="hidden" /> */}
+              {/* Logout */}
+              {/* </Input> */}
+              <Button type="submit">Logout</Button>
             </Form>
-          </div>
+          </FormControl>
         ) : (
-          <Link prefetch="intent" to="/login" className="p-4">
+          <Link prefetch="intent" to="/" className="p-4">
             Login
           </Link>
         )}
-      </div>
-      <div className="absolute top-0 left-0 w-64">
+      </Box>
+      <Box>
         <aside className="w-64 h-screen text-white bg-gray-100 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
           <header>
-            <h1 className="text-2xl font-bold py-4">Kanban</h1>
+            <Heading className="text-2xl font-bold py-4">Kanban</Heading>
           </header>
           <nav className="flex flex-col h-full">
             <ul>
@@ -64,7 +98,7 @@ export default function ProjectsRoute() {
             </ul>
           </nav>
         </aside>
-      </div>
+      </Box>
       <main className="ml-64 h-screen px-4">
         <Outlet />
       </main>

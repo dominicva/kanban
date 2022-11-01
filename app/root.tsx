@@ -98,6 +98,8 @@ const Document = withEmotionCache(
 export default function App() {
   const cookies = useLoaderData();
 
+  // console.log('theme: ', theme);
+
   return (
     <Document>
       <ChakraProvider
