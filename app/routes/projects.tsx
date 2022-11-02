@@ -58,7 +58,7 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
     <Box
       as="aside"
       position="absolute"
-      top="97px"
+      top="98px"
       left={0}
       bottom={0}
       width="250px"

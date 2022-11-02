@@ -74,16 +74,25 @@ export const action: ActionFunction = async ({
 
   switch (intent) {
     case 'create':
+      console.log('Trying to create project:', name, description);
       await createProject({ userId, name, description });
       return redirect(`/projects/${name}`);
     case 'update':
-      const updatedProject = await db.project.update({
-        where: { id: project?.id },
-        data: { name, description },
-      });
-      return updatedProject
-        ? redirect(`/projects/${updatedProject.name}`)
-        : json({ error: 'Unable to update project' }, { status: 400 });
+      console.log('Trying to update project:', name, description);
+      if (project?.id) {
+        const updatedProject = await db.project.update({
+          where: {
+            id: project.id,
+          },
+          data: { name, description },
+        });
+
+        console.log('Updated project:', updatedProject);
+        return updatedProject
+          ? redirect(`/projects/${updatedProject.name}`)
+          : json({ error: 'Unable to update project' }, { status: 400 });
+      }
+
     default:
       return json({ error: 'Invalid intent' }, { status: 400 });
   }
