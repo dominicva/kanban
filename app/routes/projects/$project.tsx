@@ -15,6 +15,21 @@ import {
 } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
+import {
+  Box,
+  Text,
+  Flex,
+  Button,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  FormErrorIcon,
+  FormErrorMessage,
+  Input,
+  Textarea,
+  ButtonGroup,
+  useColorModeValue,
+} from '@chakra-ui/react';
 
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
@@ -55,7 +70,6 @@ export const action: ActionFunction = async ({
   const description = formData.get('description');
   invariant(typeof description === 'string', 'Description must be a string');
 
-  console.log('description', description);
   const nameValid = typeof name === 'string' && name.length > 0;
 
   if (!nameValid) {
@@ -71,12 +85,9 @@ export const action: ActionFunction = async ({
 
   switch (intent) {
     case 'create':
-      console.log('Trying to create project:', name, description);
-      const createdProject = await createProject({ userId, name, description });
-      console.log('Created project:', createdProject);
+      await createProject({ userId, name, description });
       return redirect(`/projects/${name}`);
     case 'update':
-      console.log('Trying to update project:', name, description);
       if (project?.id) {
         const updatedProject = await db.project.update({
           where: {
@@ -85,7 +96,6 @@ export const action: ActionFunction = async ({
           data: { name, description },
         });
 
-        console.log('Updated project:', updatedProject);
         return updatedProject
           ? redirect(`/projects/${updatedProject.name}`)
           : json({ error: 'Unable to update project' }, { status: 400 });
@@ -94,8 +104,6 @@ export const action: ActionFunction = async ({
     default:
       return json({ error: 'Invalid intent' }, { status: 400 });
   }
-
-  // return redirect('/projects');
 };
 
 export default function ProjectRoute() {
@@ -110,58 +118,80 @@ export default function ProjectRoute() {
   const isNewProject = data.project === null;
 
   return (
-    <div>
-      <p>Create New Project</p>
+    <Box
+      p={10}
+      pb={12}
+      maxWidth="480px"
+      mx="auto"
+      mt="48px"
+      bg={useColorModeValue('gray.50', 'gray.900')}
+      boxShadow="md"
+      rounded="2xl"
+    >
+      <Text fontSize="1.5rem" mb="24px">
+        Create New Project
+      </Text>
       <Form method="post">
-        <div>
-          <label>
-            Project name
-            <input
-              type="text"
-              name="name"
-              defaultValue={data.project?.name}
-              key={data?.project?.id ?? 'new'}
-            />
-            {errors?.error ? (
-              <span className="text-red-500">{errors?.error}</span>
-            ) : null}
-          </label>
-        </div>
+        <Flex flexDir="column" gap={5}>
+          <Box>
+            <FormControl isInvalid={Boolean(errors?.error)}>
+              <FormLabel htmlFor="name">Project Name</FormLabel>
+              <Input
+                type="text"
+                name="name"
+                defaultValue={data.project?.name}
+                key={data?.project?.id ?? 'new'}
+              />
+              <FormErrorMessage>{errors?.error}</FormErrorMessage>
+            </FormControl>
+          </Box>
 
-        <div>
-          <label htmlFor="description">
-            Description
-            <textarea name="description" key={data?.project?.id ?? 'new'}>
-              {data?.project?.description ?? 'Placeholder'}
-            </textarea>
-          </label>
-        </div>
+          <Box>
+            <FormControl>
+              <FormLabel htmlFor="description">Description</FormLabel>
+              <Textarea
+                name="description"
+                size="lg"
+                resize="vertical"
+                defaultValue={data.project?.description ?? ''}
+                height="150px"
+              />
+            </FormControl>
+          </Box>
 
-        <div className="flex justify-end gap-4">
-          {isNewProject ? null : (
-            <button
+          <Flex gap={6} flexDir="column">
+            {isNewProject ? null : (
+              <Button
+                type="submit"
+                name="intent"
+                value="delete"
+                variant="custom"
+                colorScheme="customRed"
+                borderRadius="full"
+                disabled={isDeleting}
+                width="100%"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </Button>
+            )}
+
+            <Button
               type="submit"
               name="intent"
-              value="delete"
-              className="rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400 disabled:bg-red-300"
-              disabled={isDeleting}
+              value={isNewProject ? 'create' : 'update'}
+              disabled={isCreating || isUpdating}
+              variant="custom"
+              colorScheme="primary"
+              borderRadius="full"
+              width="100%"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </button>
-          )}
-
-          <button
-            type="submit"
-            name="intent"
-            value={isNewProject ? 'create' : 'update'}
-            disabled={isCreating || isUpdating}
-          >
-            {isNewProject ? (isCreating ? 'Creating...' : 'Create') : null}
-            {isNewProject ? null : isUpdating ? 'Updating...' : 'Update'}
-          </button>
-        </div>
+              {isNewProject ? (isCreating ? 'Creating...' : 'Create') : null}
+              {isNewProject ? null : isUpdating ? 'Updating...' : 'Update'}
+            </Button>
+          </Flex>
+        </Flex>
       </Form>
-    </div>
+    </Box>
   );
 }
 

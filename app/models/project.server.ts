@@ -32,24 +32,3 @@ export const deleteProjectById = async (
 ) => {
   return db.project.delete({ where: { id } });
 };
-
-// export const deleteProject = async (
-//   uniqueIdentifier: Prisma.ProjectDeleteArgs['where']
-// ) => {
-//   return db.project.delete({
-//     where: {
-//       OR: [
-//         {
-//           id: {
-//             equals: uniqueIdentifier.id,
-//           },
-//         },
-//         {
-//           name: {
-//             equals: uniqueIdentifier.name,
-//           },
-//         },
-//       ],
-//     },
-//   });
-// };

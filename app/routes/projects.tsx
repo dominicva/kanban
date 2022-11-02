@@ -77,14 +77,6 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
       gridColumn="span 1"
       p={6}
     >
-      {/* <Box as="header" p="6">
-        <Link to="/">
-          <Box as="h1" fontSize="2xl" fontWeight="bold">
-            Kanban
-          </Box>
-        </Link>
-      </Box> */}
-
       <Box as="nav">
         <Text
           style={{ fontVariant: 'small-caps' }}
@@ -140,11 +132,6 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
   );
 }
 
-//  {projectNames.map(name => (
-//   <li key={name}>
-//     <Link to={name}>{name}</Link>
-//   </li>
-// ))})
 function Header({ user }: { user: User | any }) {
   return (
     <Box as="header" p="6" borderBottomWidth="1px" gridColumn="span 2">
@@ -183,107 +170,11 @@ export default function ProjectsRoute() {
   return (
     <Grid gridTemplateColumns="250px 1fr">
       {user && <Header user={user} />}
-      {/* <Header user={user} /> */}
-      {/* <Box>
-        <Form method="post">
-          <Input name="intent" value="logout" type="hidden" />
-          <Button type="submit">Logout</Button>
-        </Form>
-      </Box> */}
-      {/* <Box> */}
+
       <Sidebar projectNames={projects.map(project => project.name)} />
-      {/* <Button
-          ref={btnRef}
-          variant="custom"
-          colorScheme="primary"
-          onClick={onOpen}
-        >
-          Open
-        </Button>
-        <Drawer
-          isOpen={isOpen}
-          placement="left"
-          onClose={onClose}
-          finalFocusRef={btnRef}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>Kanban</DrawerHeader>
-            <DrawerBody>
-              <nav>
-                <ul>
-                  {projects.map(project => (
-                    <li key={project.id}>
-                      <Link prefetch="intent" to={project.id}>
-                        {project.name}
-                      </Link>
-                    </li>
-                  ))}
-                  <Button variant="link" colorScheme="purple">
-                    <Link prefetch="intent" to="new">
-                      Create new project
-                    </Link>
-                  </Button>
-                </ul>
-              </nav>
-            </DrawerBody>
-            <DrawerFooter flexDir="column" pb={8} alignItems="flex-start">
-              <Flex
-                h="48px"
-                w="100%"
-                gap="24px"
-                mb={4}
-                align="center"
-                justify="center"
-                borderRadius="6px"
-                bg={useColorModeValue('gray.100', 'gray.900')}
-              >
-                <Icon display="block" as={SunIcon} />
-                <Switch
-                  colorScheme="primary"
-                  variant="custom"
-                  onChange={toggleColorMode}
-                />
-                <Icon display="block" as={MoonIcon} />
-              </Flex>
-              <Button
-                pl={1.5}
-                variant="ghost"
-                leftIcon={<HiEyeOff />}
-                color={useColorModeValue('gray.500', 'whiteAlpha.600')}
-                onClick={onClose}
-              >
-                Hide sidebar
-              </Button>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-        {!isOpen ? (
-          <IconButton
-            aria-label="show sidebar"
-            onClick={onOpen}
-            icon={<HiEye />}
-            variant="custom"
-            colorScheme="primary"
-            position="absolute"
-            bottom={8}
-            left={0}
-            w="56px"
-            h="48px"
-            borderTopRightRadius="50px"
-            borderBottomRightRadius="50px"
-          />
-        ) : null} */}
-      {/* </Box> */}
+
       <Box as="main" gridColumnStart={2} h="calc(100vh - 98px)">
         <Outlet />
-        {/* <Box>
-          <Heading as="h2" size="lg" mb={4}>
-            Projects
-          </Heading>
-          <Box>STUFF</Box>
-        </Box> */}
       </Box>
     </Grid>
   );

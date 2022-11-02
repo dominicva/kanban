@@ -32,17 +32,16 @@ const customVariant = defineStyle(props => {
     fontWeight: 'bold',
     fontFamily: 'Plus Jakarta Sans',
     fontSize: '13px',
-    lineHeight: '23px',
     px: '32px',
-    transition: 'transform 0.15s ease-out, backgroun 0.15s ease-out',
+    transition: 'transform 0.15s ease-out, background 0.15s ease-out',
     _dark: {
       bg: `${c}.900`,
       _hover: {
-        bg: `#A8A4FF`,
+        bg: `${c}.600`,
       },
     },
     _hover: {
-      bg: `${c}.600`,
+      bg: `${c}.700`,
       transform: 'scale(1.05)',
       _dark: {
         bg: `${c}.300`,
