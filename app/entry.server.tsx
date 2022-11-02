@@ -36,7 +36,6 @@ export default function handleRequest(
   );
 
   responseHeaders.set('Content-Type', 'text/html');
-  responseHeaders.set('Cookie', 'chakra-ui-color-mode=dark');
 
   return new Response(`<!DOCTYPE html>${markup}`, {
     status: responseStatusCode,

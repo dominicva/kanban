@@ -1,11 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { withEmotionCache } from '@emotion/react';
-import {
-  ChakraProvider,
-  cookieStorageManagerSSR,
-  localStorageManager,
-  ColorModeScript,
-} from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import {
   Links,
   LiveReload,
@@ -13,13 +8,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from '@remix-run/react';
-import type {
-  MetaFunction,
-  LinksFunction,
-  LoaderFunction,
-} from '@remix-run/node'; // Depends on the runtime you choose
+import type { MetaFunction, LinksFunction } from '@remix-run/node'; // Depends on the runtime you choose
 
 import { ServerStyleContext, ClientStyleContext } from './context';
 import theme from './theme';
@@ -39,14 +29,6 @@ export let links: LinksFunction = () => {
       href: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&display=swap',
     },
   ];
-};
-
-// Typescript
-// This will return cookies
-export const loader: LoaderFunction = async ({ request }) => {
-  // first time users will not have any cookies and you may not return
-  // undefined here, hence ?? is necessary
-  return request.headers.get('cookie') ?? '';
 };
 
 interface DocumentProps {
@@ -70,7 +52,7 @@ const Document = withEmotionCache(
       });
       // reset cache to reapply global styles
       clientStyleData?.reset();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
       <html lang="en">
@@ -86,7 +68,6 @@ const Document = withEmotionCache(
           ))}
         </head>
         <body>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           {children}
           <ScrollRestoration />
           <Scripts />
@@ -98,18 +79,9 @@ const Document = withEmotionCache(
 );
 
 export default function App() {
-  const cookies = useLoaderData();
-
   return (
     <Document>
-      <ChakraProvider
-        theme={theme}
-        colorModeManager={
-          typeof cookies === 'string'
-            ? cookieStorageManagerSSR(cookies)
-            : localStorageManager
-        }
-      >
+      <ChakraProvider theme={theme}>
         <Outlet />
       </ChakraProvider>
     </Document>

@@ -24,8 +24,9 @@ import {
   Center,
   useColorMode,
   ColorModeScript,
-  // cookieStorageManager,
 } from '@chakra-ui/react';
+
+import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 
 type ActionData = {
   error?: {
@@ -157,6 +158,9 @@ export default function IndexRoute() {
       <Flex flexDir="column">
         <Center>
           <Heading>Remix Kanban</Heading>
+          <Button onClick={toggleColorMode}>
+            {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          </Button>
         </Center>
 
         <Flex flexDir="column">
@@ -189,12 +193,9 @@ export default function IndexRoute() {
               {formFooter}
             </Flex>
           </Form>
-
-          <Button value={colorMode} onClick={toggleColorMode}>
-            Toggle {colorMode} mode
-          </Button>
         </Flex>
       </Flex>
+
       <main>
         <Outlet />
       </main>

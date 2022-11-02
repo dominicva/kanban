@@ -11,7 +11,9 @@ import {
   FormControl,
   Heading,
   Input,
+  useColorMode,
 } from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request);
@@ -37,6 +39,7 @@ export const action = async ({ request }: LoaderArgs) => {
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <div className="w-screen h-screen">
@@ -79,6 +82,9 @@ export default function ProjectsRoute() {
             </ul>
           </nav>
         </aside>
+        <Button onClick={toggleColorMode}>
+          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+        </Button>
       </Box>
       <main className="ml-64 h-screen px-4">
         <Outlet />
