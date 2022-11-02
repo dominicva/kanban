@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { withEmotionCache } from '@emotion/react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Box, useColorModeValue } from '@chakra-ui/react';
 import {
   Links,
   LiveReload,
@@ -83,7 +83,9 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider theme={theme}>
-        <Outlet />
+        <Box h="100vh" w="100vw" overflow="hidden">
+          <Outlet />
+        </Box>
       </ChakraProvider>
     </Document>
   );

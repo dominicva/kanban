@@ -137,12 +137,7 @@ export default function IndexRoute() {
   const isLogin = loginType === 'login';
 
   return (
-    <Box
-      h="100vh"
-      w="100vw"
-      overflow="hidden"
-      bg={useColorModeValue('gray.50', 'gray.900')}
-    >
+    <Box w="100%" h="100%" bg={useColorModeValue('gray.50', 'gray.900')}>
       <Box m={4} pos="absolute" right={0}>
         <IconButton
           aria-label="Change color mode"
@@ -228,6 +223,7 @@ export default function IndexRoute() {
       <main>
         <Outlet />
       </main>
+      {/* </Box> */}
     </Box>
   );
 }

@@ -2,6 +2,28 @@ import type { ThemeConfig } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system';
 
+const customSwitch = defineStyle(props => {
+  const { colorScheme: c } = props;
+  return {
+    track: {
+      bg: `${c}.900`,
+      alignItems: 'center',
+      height: '20px',
+      width: '40px',
+      _checked: {
+        bg: `${c}.900`,
+      },
+    },
+    thumb: {
+      transition: 'transform 0.2s',
+      transform: 'translateX(2px)',
+      _checked: {
+        transform: 'translateX(20px)',
+      },
+    },
+  };
+});
+
 const customVariant = defineStyle(props => {
   const { colorScheme: c } = props;
   return {
@@ -42,6 +64,12 @@ export const buttonTheme = defineStyleConfig({
   },
 });
 
+export const switchTheme = defineStyleConfig({
+  variants: {
+    custom: customSwitch,
+  },
+});
+
 const theme: ThemeConfig = extendTheme({
   config: {
     initialColorMode: 'dark',
@@ -76,6 +104,7 @@ const theme: ThemeConfig = extendTheme({
 
   components: {
     Button: buttonTheme,
+    Switch: switchTheme,
   },
 });
 
