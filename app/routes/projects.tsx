@@ -1,3 +1,4 @@
+import type { Project, User } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
 import { useRef } from 'react';
 import { redirect, json } from '@remix-run/node';
@@ -20,6 +21,8 @@ import {
   useDisclosure,
   IconButton,
   Switch,
+  Heading,
+  Text,
   Flex,
   Icon,
   useColorModeValue,
@@ -49,6 +52,69 @@ export const action = async ({ request }: LoaderArgs) => {
   }
 };
 
+function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
+  return (
+    <Box
+      as="aside"
+      position="absolute"
+      top="84px"
+      left={0}
+      bottom={0}
+      width="250px"
+      borderRightWidth="1px"
+      overflowY="auto"
+      _focus={{ outline: 'none' }}
+      tabIndex={-1}
+      id="sidebar"
+    >
+      {/* <Box as="header" p="6">
+        <Link to="/">
+          <Box as="h1" fontSize="2xl" fontWeight="bold">
+            Kanban
+          </Box>
+        </Link>
+      </Box> */}
+
+      <Box as="nav" p="6">
+        <ul>
+          <li>
+            <Link to="new">Create new project</Link>
+          </li>
+          {projectNames.map(name => (
+            <li key={name}>
+              <Link to={name}>{name}</Link>
+            </li>
+          ))}
+        </ul>
+      </Box>
+    </Box>
+  );
+}
+
+function Header({ username }: { username: User['username'] }) {
+  return (
+    <Box as="header" p="6" borderBottomWidth="1px">
+      {/* <Box p="6"> */}
+      <Flex justifyContent="space-between" alignItems="center">
+        <Link to="/">
+          <Box as="h1" fontSize="xl" fontWeight="bold">
+            Kanban
+          </Box>
+        </Link>
+        {/* </Box> */}
+        <Heading as="h1" fontSize="xl" fontWeight="semibold">
+          {username}
+        </Heading>
+        <Form method="post">
+          <Button type="submit" name="intent" value="logout">
+            Logout
+          </Button>
+        </Form>
+      </Flex>
+    </Box>
+  );
+}
+
 export default function ProjectsRoute() {
   const { projects } = useLoaderData<typeof loader>();
   const { toggleColorMode } = useColorMode();
@@ -57,14 +123,16 @@ export default function ProjectsRoute() {
 
   return (
     <Box>
-      <Box className="ml-64">
+      <Header username={projects[0]?.userId} />
+      {/* <Box>
         <Form method="post">
           <Input name="intent" value="logout" type="hidden" />
           <Button type="submit">Logout</Button>
         </Form>
-      </Box>
-      <Box>
-        <Button
+      </Box> */}
+      {/* <Box> */}
+      <Sidebar projectNames={projects.map(project => project.name)} />
+      {/* <Button
           ref={btnRef}
           variant="custom"
           colorScheme="primary"
@@ -83,25 +151,17 @@ export default function ProjectsRoute() {
             <DrawerCloseButton />
             <DrawerHeader>Kanban</DrawerHeader>
             <DrawerBody>
-              <nav className="flex flex-col h-full">
+              <nav>
                 <ul>
                   {projects.map(project => (
                     <li key={project.id}>
-                      <Link
-                        prefetch="intent"
-                        to={project.id}
-                        className="text-primary underlined focus:outline-none block whitespace-nowrap text-2xl font-medium transition"
-                      >
+                      <Link prefetch="intent" to={project.id}>
                         {project.name}
                       </Link>
                     </li>
                   ))}
                   <Button variant="link" colorScheme="purple">
-                    <Link
-                      prefetch="intent"
-                      to="new"
-                      className="text-primary underlined focus:outline-none"
-                    >
+                    <Link prefetch="intent" to="new">
                       Create new project
                     </Link>
                   </Button>
@@ -154,9 +214,9 @@ export default function ProjectsRoute() {
             borderTopRightRadius="50px"
             borderBottomRightRadius="50px"
           />
-        ) : null}
-      </Box>
-      <main className="ml-64 h-screen px-4">
+        ) : null} */}
+      {/* </Box> */}
+      <main>
         <Outlet />
       </main>
     </Box>
