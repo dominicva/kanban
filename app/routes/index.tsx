@@ -11,23 +11,17 @@ import {
   FormErrorMessage,
   Input,
   Button,
-  FormHelperText,
   Box,
   Text,
   Stack,
   HStack,
-  Flex,
-  Spacer,
   Heading,
-  VStack,
   Center,
   useColorMode,
-  ColorModeScript,
   useColorModeValue,
   useBreakpointValue,
-  InputGroup,
-  InputRightElement,
   IconButton,
+  Container,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import PasswordInput from '~/components/PasswordInput';
@@ -142,40 +136,64 @@ export default function IndexRoute() {
   const error = action?.error;
   const isLogin = loginType === 'login';
 
-  const formFooter = (
-    <FormControl>
-      <FormHelperText textAlign="center">
-        {isLogin ? 'Need an account?' : 'Already have an account?'}{' '}
-        <Button
-          variant="link"
-          onClick={() => setLoginType(isLogin ? 'signup' : 'login')}
-          size="sm"
-        >
-          {isLogin ? 'Sign up' : 'Log in'}
-        </Button>
-      </FormHelperText>
-    </FormControl>
-  );
-
   return (
-    <Box>
-      <Flex flexDir="column">
+    <Box
+      h="100vh"
+      w="100vw"
+      overflow="hidden"
+      bg={useColorModeValue('gray.50', 'gray.900')}
+    >
+      <Box m={4} pos="absolute" right={0}>
+        <IconButton
+          aria-label="Change color mode"
+          size="lg"
+          onClick={toggleColorMode}
+        >
+          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+        </IconButton>
+      </Box>
+      <Container
+        w="100%"
+        maxW="lg"
+        py={{ base: '12', md: '24' }}
+        px={{ base: '0', sm: '8' }}
+      >
         <Center>
-          <Heading>Remix Kanban</Heading>
-          <Button onClick={toggleColorMode}>
-            {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-          </Button>
+          <Heading as="h2" fontWeight="semibold" fontSize="3xl">
+            Remix Kanban
+          </Heading>
         </Center>
 
         <Box
+          mt={8}
           py={{ base: '0', sm: '8' }}
           px={{ base: '4', sm: '10' }}
+          bg={useColorModeValue('white', 'gray.800')}
           boxShadow={{ base: 'none', sm: useColorModeValue('md', 'md-dark') }}
+          rounded={{ sm: 'lg' }}
           borderRadius={{ base: 'none', sm: 'xl' }}
         >
-          <Stack spacing={6}>
-            <Heading fontSize="2xl">{isLogin ? 'Log in' : 'Sign up'}</Heading>
+          <Stack spacing={{ base: 2, md: 3 }} textAlign="center">
+            <Heading size={useBreakpointValue({ base: 'md', md: 'lg' })}>
+              {isLogin ? 'Log in to your account' : 'Sign up for an account'}
+            </Heading>
+            <HStack spacing={1} justify="center">
+              <Text>
+                {isLogin
+                  ? "Don't have an account?"
+                  : 'Already have an account?'}
+              </Text>
+              <Button
+                variant="link"
+                textColor={useColorModeValue('primary.900', 'primary.700')}
+                onClick={() => setLoginType(isLogin ? 'signup' : 'login')}
+              >
+                {isLogin ? 'Sign up' : 'Log in'}
+              </Button>
+            </HStack>
+          </Stack>
 
+          <Stack mt={8} spacing={6}>
             <Form method="post">
               <Stack spacing={5}>
                 <FormControl isInvalid={error?.type === 'username'}>
@@ -197,14 +215,15 @@ export default function IndexRoute() {
                 value={loginType}
                 variant="custom"
                 colorScheme="primary"
+                width="full"
+                my={6}
               >
                 {loginType === 'login' ? 'Log in' : 'Sign up'}
               </Button>
-              {formFooter}
             </Form>
           </Stack>
         </Box>
-      </Flex>
+      </Container>
 
       <main>
         <Outlet />
