@@ -7,7 +7,9 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "start": "remix-serve build"
+    "start": "remix-serve build",
+    "theme": "chakra-cli tokens app/theme.ts",
+    "theme:watch": "chakra-cli tokens app/theme.ts --watch"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.11",
@@ -27,6 +29,7 @@
     "react-icons": "4.6.0"
   },
   "devDependencies": {
+    "@chakra-ui/cli": "2.1.8",
     "@remix-run/dev": "^1.7.4",
     "@remix-run/eslint-config": "^1.7.4",
     "@types/bcryptjs": "2.4.2",

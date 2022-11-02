@@ -195,7 +195,8 @@ export default function IndexRoute() {
                 type="submit"
                 name="intent"
                 value={loginType}
-                variant="solid"
+                variant="custom"
+                colorScheme="primary"
               >
                 {loginType === 'login' ? 'Log in' : 'Sign up'}
               </Button>
