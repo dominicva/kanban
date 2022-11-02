@@ -5,7 +5,6 @@ import { Outlet, Form, useActionData } from '@remix-run/react';
 import bcrypt from 'bcryptjs';
 import { db } from '~/utils/db.server';
 import { getUserId, createUserSession, signup } from '~/utils/session.server';
-
 import {
   FormControl,
   FormLabel,
@@ -24,9 +23,14 @@ import {
   Center,
   useColorMode,
   ColorModeScript,
+  useColorModeValue,
+  useBreakpointValue,
+  InputGroup,
+  InputRightElement,
+  IconButton,
 } from '@chakra-ui/react';
-
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import PasswordInput from '~/components/PasswordInput';
 
 type ActionData = {
   error?: {
@@ -131,12 +135,12 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function IndexRoute() {
-  const [loginType, setLoginType] = useState<'login' | 'signup'>('login');
   const action = useActionData<ActionData>();
+  const [loginType, setLoginType] = useState<'login' | 'signup'>('login');
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const error = action?.error;
   const isLogin = loginType === 'login';
-
-  const { colorMode, toggleColorMode } = useColorMode();
 
   const formFooter = (
     <FormControl>
@@ -163,24 +167,29 @@ export default function IndexRoute() {
           </Button>
         </Center>
 
-        <Flex flexDir="column">
-          <Text>{isLogin ? 'Log in' : 'Sign up'}</Text>
-          <Form method="post">
-            <Flex flexDir="column">
-              <FormControl isInvalid={error?.type === 'username'}>
-                <FormLabel htmlFor="username">Username</FormLabel>
-                <Input type="text" name="username" />
-                <FormErrorMessage>{error?.message}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={error?.type === 'password'}>
-                <FormLabel>Password</FormLabel>
-                <Input type="password" name="password" />
-                <FormErrorMessage>{error?.message}</FormErrorMessage>
-              </FormControl>
+        <Box
+          py={{ base: '0', sm: '8' }}
+          px={{ base: '4', sm: '10' }}
+          boxShadow={{ base: 'none', sm: useColorModeValue('md', 'md-dark') }}
+          borderRadius={{ base: 'none', sm: 'xl' }}
+        >
+          <Stack spacing={6}>
+            <Heading fontSize="2xl">{isLogin ? 'Log in' : 'Sign up'}</Heading>
 
-              <FormControl isInvalid={error?.type === 'form'}>
-                <FormErrorMessage>{error?.message}</FormErrorMessage>
-              </FormControl>
+            <Form method="post">
+              <Stack spacing={5}>
+                <FormControl isInvalid={error?.type === 'username'}>
+                  <FormLabel htmlFor="username">Username</FormLabel>
+                  <Input type="text" name="username" />
+                  <FormErrorMessage>{error?.message}</FormErrorMessage>
+                </FormControl>
+
+                <PasswordInput error={error} />
+
+                <FormControl isInvalid={error?.type === 'form'}>
+                  <FormErrorMessage>{error?.message}</FormErrorMessage>
+                </FormControl>
+              </Stack>
 
               <Button
                 type="submit"
@@ -191,9 +200,9 @@ export default function IndexRoute() {
                 {loginType === 'login' ? 'Log in' : 'Sign up'}
               </Button>
               {formFooter}
-            </Flex>
-          </Form>
-        </Flex>
+            </Form>
+          </Stack>
+        </Box>
       </Flex>
 
       <main>
