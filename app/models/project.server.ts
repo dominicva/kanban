@@ -13,14 +13,43 @@ export const getProject = async (id: Prisma.ProjectWhereUniqueInput['id']) => {
   });
 };
 
+export const getProjectByName = async (
+  name: Prisma.ProjectWhereUniqueInput['name']
+) => {
+  return db.project.findUnique({
+    where: { name },
+  });
+};
+
 export const createProject = async (
   data: Prisma.ProjectUncheckedCreateInput
 ) => {
   return db.project.create({ data });
 };
 
-export const deleteProject = async (
+export const deleteProjectById = async (
   id: Prisma.ProjectWhereUniqueInput['id']
 ) => {
   return db.project.delete({ where: { id } });
 };
+
+// export const deleteProject = async (
+//   uniqueIdentifier: Prisma.ProjectDeleteArgs['where']
+// ) => {
+//   return db.project.delete({
+//     where: {
+//       OR: [
+//         {
+//           id: {
+//             equals: uniqueIdentifier.id,
+//           },
+//         },
+//         {
+//           name: {
+//             equals: uniqueIdentifier.name,
+//           },
+//         },
+//       ],
+//     },
+//   });
+// };

@@ -9,21 +9,22 @@ import {
 import { ErrorFallback } from '~/components';
 import {
   createProject,
-  deleteProject,
+  deleteProjectById,
   getProject,
+  getProjectByName,
 } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 import invariant from 'tiny-invariant';
 import { db } from '~/utils/db.server';
 
 export const loader = async ({ params }: LoaderArgs) => {
-  invariant(params.id, 'Project id is required');
+  invariant(params.project, 'Project name is required');
 
-  if (params.id === 'new') {
-    return json({ project: null });
+  if (params.project === 'new') {
+    return json({ project: 'new' });
   }
 
-  const project = await getProject(params.id);
+  const project = await getProjectByName(params.project);
 
   if (!project) {
     throw new Response('Not found', { status: 404 });
@@ -44,52 +45,68 @@ export const action: ActionFunction = async ({
   const formData = await request.formData();
   const intent = formData.get('intent');
 
-  invariant(typeof params.id === 'string', 'Project id is required');
+  invariant(typeof params.project === 'string', 'Project name is required');
 
-  if (intent === 'delete') {
-    await deleteProject(params.id);
+  const project = await getProjectByName(params.project);
+
+  if (project && intent === 'delete') {
+    await deleteProjectById(project.id);
     return redirect('/projects');
   }
 
   const name = formData.get('name');
   const description = formData.get('description');
+  invariant(typeof description === 'string', 'Description must be a string');
 
   const nameValid = typeof name === 'string' && name.length > 0;
+  // const descriptionValid = typeof description === 'string'
 
   if (!nameValid) {
     return json({ error: 'Project name is required' }, { status: 400 });
   }
 
-  if (params.id === 'new') {
-    const nameUnique =
-      (await db.project.findUnique({
-        where: { name },
-      })) === null;
-
-    if (!nameUnique) {
-      return json(
-        { error: `This project name "${name}" is already taken` },
-        { status: 400 }
-      );
-    }
-
-    await createProject({
-      name: name as string,
-      description: description as string,
-      userId,
-    });
-  } else {
-    await db.project.update({
-      where: { id: params.id },
-      data: {
-        name: name as string,
-        description: description as string,
-      },
-    });
+  if (project && params.project === 'new') {
+    return json(
+      { error: `This project name "${name}" is already taken` },
+      { status: 400 }
+    );
   }
 
-  return redirect('/projects');
+  switch (intent) {
+    case 'create':
+      await createProject({ userId, name, description });
+      return redirect(`/projects/${name}`);
+    case 'update':
+      const updatedProject = await db.project.update({
+        where: { id: project?.id },
+        data: { name, description },
+      });
+      return updatedProject
+        ? redirect(`/projects/${updatedProject.name}`)
+        : json({ error: 'Unable to update project' }, { status: 400 });
+    default:
+      return json({ error: 'Invalid intent' }, { status: 400 });
+  }
+
+  // return redirect('/projects');
 };
+
+//   const newProject = await createProject({
+//     name: name as string,
+//     description: description as string,
+//     userId,
+//   });
+
+//   await db.project.update({
+//     where: { id: params.id },
+//     data: {
+//       name: name as string,
+//       description: description as string,
+//     },
+//   });
+// }
+
+// };
 
 export default function NewProject() {
   const data = useLoaderData<typeof loader>();
@@ -112,7 +129,9 @@ export default function NewProject() {
             <input
               type="text"
               name="name"
+              // @ts-ignore
               key={data?.project?.id ?? 'new'}
+              // @ts-ignore
               defaultValue={data?.project?.name}
             />
             {errors?.error ? (
@@ -126,8 +145,9 @@ export default function NewProject() {
             Description
             <textarea
               name="description"
+              // @ts-ignore
               key={data?.project?.id ?? 'new'}
-              defaultValue={data?.project?.description ?? ''}
+              // defaultValue={data?.project?.description ?? ''}
             />
           </label>
         </div>

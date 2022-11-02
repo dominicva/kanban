@@ -1,4 +1,4 @@
-import type { Project, User } from '@prisma/client';
+import type { Prisma, Project, User } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
 import { useRef } from 'react';
 import { redirect, json } from '@remix-run/node';
@@ -26,6 +26,7 @@ import {
   Flex,
   Icon,
   useColorModeValue,
+  Grid,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
@@ -57,7 +58,7 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
     <Box
       as="aside"
       position="absolute"
-      top="84px"
+      top="97px"
       left={0}
       bottom={0}
       width="250px"
@@ -66,6 +67,7 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
       _focus={{ outline: 'none' }}
       tabIndex={-1}
       id="sidebar"
+      gridColumn="span 1"
     >
       {/* <Box as="header" p="6">
         <Link to="/">
@@ -91,39 +93,45 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
   );
 }
 
-function Header({ username }: { username: User['username'] }) {
+function Header({ user }: { user: User | any }) {
   return (
-    <Box as="header" p="6" borderBottomWidth="1px">
-      {/* <Box p="6"> */}
+    <Box as="header" p="6" borderBottomWidth="1px" gridColumn="span 2">
       <Flex justifyContent="space-between" alignItems="center">
         <Link to="/">
-          <Box as="h1" fontSize="xl" fontWeight="bold">
+          <Box as="h1" fontSize="2xl" fontWeight="semibold" letterSpacing={1}>
             Kanban
           </Box>
         </Link>
-        {/* </Box> */}
-        <Heading as="h1" fontSize="xl" fontWeight="semibold">
-          {username}
-        </Heading>
-        <Form method="post">
-          <Button type="submit" name="intent" value="logout">
-            Logout
-          </Button>
-        </Form>
+        <Flex alignItems="center" gap={8}>
+          <Box>
+            <Text fontSize="xs" fontWeight="thin" mb={1}>
+              Logged in as
+            </Text>
+            <Text fontSize="lg" fontWeight="normal" letterSpacing={1}>
+              @{user?.username}
+            </Text>
+          </Box>
+          <Form method="post">
+            <Button type="submit" name="intent" value="logout">
+              Logout
+            </Button>
+          </Form>
+        </Flex>
       </Flex>
     </Box>
   );
 }
 
 export default function ProjectsRoute() {
-  const { projects } = useLoaderData<typeof loader>();
+  const { projects, user } = useLoaderData<typeof loader>();
   const { toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
 
   return (
-    <Box>
-      <Header username={projects[0]?.userId} />
+    <Grid gridTemplateColumns="250px 1fr">
+      {user && <Header user={user} />}
+      {/* <Header user={user} /> */}
       {/* <Box>
         <Form method="post">
           <Input name="intent" value="logout" type="hidden" />
@@ -216,9 +224,15 @@ export default function ProjectsRoute() {
           />
         ) : null} */}
       {/* </Box> */}
-      <main>
+      <Box as="main" gridColumnStart={2} h="calc(100vh - 98px)">
         <Outlet />
-      </main>
-    </Box>
+        {/* <Box>
+          <Heading as="h2" size="lg" mb={4}>
+            Projects
+          </Heading>
+          <Box>STUFF</Box>
+        </Box> */}
+      </Box>
+    </Grid>
   );
 }
