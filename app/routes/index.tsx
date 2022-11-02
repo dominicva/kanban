@@ -1,6 +1,5 @@
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { useState } from 'react';
 import { Outlet, Form, useActionData } from '@remix-run/react';
 import bcrypt from 'bcryptjs';
@@ -17,6 +16,15 @@ import {
   Box,
   Text,
   Stack,
+  HStack,
+  Flex,
+  Spacer,
+  Heading,
+  VStack,
+  Center,
+  useColorMode,
+  ColorModeScript,
+  // cookieStorageManager,
 } from '@chakra-ui/react';
 
 type ActionData = {
@@ -127,6 +135,8 @@ export default function IndexRoute() {
   const error = action?.error;
   const isLogin = loginType === 'login';
 
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const formFooter = (
     <FormControl>
       <FormHelperText textAlign="center">
@@ -143,42 +153,51 @@ export default function IndexRoute() {
   );
 
   return (
-    <Stack>
-      <Box>
-        <h1>Remix Kanban</h1>
-      </Box>
+    <Box>
+      <Flex flexDir="column">
+        <Center>
+          <Heading>Remix Kanban</Heading>
+        </Center>
 
-      <Stack>
-        <Text className="text-xl font-bold">
-          {isLogin ? 'Log in' : 'Sign up'}
-        </Text>
-        <Form method="post">
-          <Stack>
-            <FormControl isInvalid={error?.type === 'username'}>
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <Input type="text" name="username" />
-              <FormErrorMessage>{error?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={error?.type === 'password'}>
-              <FormLabel>Password</FormLabel>
-              <Input type="password" name="password" />
-              <FormErrorMessage>{error?.message}</FormErrorMessage>
-            </FormControl>
+        <Flex flexDir="column">
+          <Text>{isLogin ? 'Log in' : 'Sign up'}</Text>
+          <Form method="post">
+            <Flex flexDir="column">
+              <FormControl isInvalid={error?.type === 'username'}>
+                <FormLabel htmlFor="username">Username</FormLabel>
+                <Input type="text" name="username" />
+                <FormErrorMessage>{error?.message}</FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={error?.type === 'password'}>
+                <FormLabel>Password</FormLabel>
+                <Input type="password" name="password" />
+                <FormErrorMessage>{error?.message}</FormErrorMessage>
+              </FormControl>
 
-            <FormControl isInvalid={error?.type === 'form'}>
-              <FormErrorMessage>{error?.message}</FormErrorMessage>
-            </FormControl>
+              <FormControl isInvalid={error?.type === 'form'}>
+                <FormErrorMessage>{error?.message}</FormErrorMessage>
+              </FormControl>
 
-            <Button type="submit" name="intent" value={loginType}>
-              {loginType === 'login' ? 'Log in' : 'Sign up'}
-            </Button>
-            {formFooter}
-          </Stack>
-        </Form>
-      </Stack>
+              <Button
+                type="submit"
+                name="intent"
+                value={loginType}
+                variant="solid"
+              >
+                {loginType === 'login' ? 'Log in' : 'Sign up'}
+              </Button>
+              {formFooter}
+            </Flex>
+          </Form>
+
+          <Button value={colorMode} onClick={toggleColorMode}>
+            Toggle {colorMode} mode
+          </Button>
+        </Flex>
+      </Flex>
       <main>
         <Outlet />
       </main>
-    </Stack>
+    </Box>
   );
 }
