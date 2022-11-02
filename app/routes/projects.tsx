@@ -8,9 +8,6 @@ import { getUser, logout } from '~/utils/session.server';
 import {
   Box,
   Button,
-  FormHelperText,
-  FormControl,
-  Heading,
   Input,
   useColorMode,
   Drawer,
@@ -22,9 +19,7 @@ import {
   DrawerCloseButton,
   useDisclosure,
   IconButton,
-  ButtonGroup,
   Switch,
-  HStack,
   Flex,
   Icon,
   useColorModeValue,
@@ -55,8 +50,8 @@ export const action = async ({ request }: LoaderArgs) => {
 };
 
 export default function ProjectsRoute() {
-  const { projects, user } = useLoaderData<typeof loader>();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { projects } = useLoaderData<typeof loader>();
+  const { toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
 
@@ -113,11 +108,12 @@ export default function ProjectsRoute() {
                 </ul>
               </nav>
             </DrawerBody>
-            <DrawerFooter flexDir="column">
+            <DrawerFooter flexDir="column" pb={8} alignItems="flex-start">
               <Flex
                 h="48px"
                 w="100%"
                 gap="24px"
+                mb={4}
                 align="center"
                 justify="center"
                 borderRadius="6px"
@@ -131,12 +127,34 @@ export default function ProjectsRoute() {
                 />
                 <Icon display="block" as={MoonIcon} />
               </Flex>
-              <Button variant="ghost" leftIcon={<HiEyeOff />}>
+              <Button
+                pl={1.5}
+                variant="ghost"
+                leftIcon={<HiEyeOff />}
+                color={useColorModeValue('gray.500', 'whiteAlpha.600')}
+                onClick={onClose}
+              >
                 Hide sidebar
               </Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
+        {!isOpen ? (
+          <IconButton
+            aria-label="show sidebar"
+            onClick={onOpen}
+            icon={<HiEye />}
+            variant="custom"
+            colorScheme="primary"
+            position="absolute"
+            bottom={8}
+            left={0}
+            w="56px"
+            h="48px"
+            borderTopRightRadius="50px"
+            borderBottomRightRadius="50px"
+          />
+        ) : null}
       </Box>
       <main className="ml-64 h-screen px-4">
         <Outlet />

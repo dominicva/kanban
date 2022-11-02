@@ -223,7 +223,6 @@ export default function IndexRoute() {
       <main>
         <Outlet />
       </main>
-      {/* </Box> */}
     </Box>
   );
 }
