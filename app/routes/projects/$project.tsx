@@ -6,26 +6,23 @@ import {
   useLoaderData,
   useTransition,
 } from '@remix-run/react';
+import invariant from 'tiny-invariant';
 import { ErrorFallback } from '~/components';
 import {
   createProject,
   deleteProjectById,
-  getProject,
   getProjectByName,
 } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
-import invariant from 'tiny-invariant';
 import { db } from '~/utils/db.server';
 
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
-
   if (params.project === 'new') {
-    return json({ project: 'new' });
+    return json({ project: null });
   }
 
   const project = await getProjectByName(params.project);
-
   if (!project) {
     throw new Response('Not found', { status: 404 });
   }
@@ -58,8 +55,8 @@ export const action: ActionFunction = async ({
   const description = formData.get('description');
   invariant(typeof description === 'string', 'Description must be a string');
 
+  console.log('description', description);
   const nameValid = typeof name === 'string' && name.length > 0;
-  // const descriptionValid = typeof description === 'string'
 
   if (!nameValid) {
     return json({ error: 'Project name is required' }, { status: 400 });
@@ -75,7 +72,8 @@ export const action: ActionFunction = async ({
   switch (intent) {
     case 'create':
       console.log('Trying to create project:', name, description);
-      await createProject({ userId, name, description });
+      const createdProject = await createProject({ userId, name, description });
+      console.log('Created project:', createdProject);
       return redirect(`/projects/${name}`);
     case 'update':
       console.log('Trying to update project:', name, description);
@@ -100,24 +98,7 @@ export const action: ActionFunction = async ({
   // return redirect('/projects');
 };
 
-//   const newProject = await createProject({
-//     name: name as string,
-//     description: description as string,
-//     userId,
-//   });
-
-//   await db.project.update({
-//     where: { id: params.id },
-//     data: {
-//       name: name as string,
-//       description: description as string,
-//     },
-//   });
-// }
-
-// };
-
-export default function NewProject() {
+export default function ProjectRoute() {
   const data = useLoaderData<typeof loader>();
   const errors = useActionData<typeof action>();
 
@@ -129,19 +110,17 @@ export default function NewProject() {
   const isNewProject = data.project === null;
 
   return (
-    <div className="max-w-2xl w-full mx-auto">
-      <p className="text-2xl font-bold mb-4">Create New Project</p>
-      <Form method="post" className="flex flex-col gap-4">
-        <div className="flex flex-col">
-          <label className="flex flex-col">
+    <div>
+      <p>Create New Project</p>
+      <Form method="post">
+        <div>
+          <label>
             Project name
             <input
               type="text"
               name="name"
-              // @ts-ignore
+              defaultValue={data.project?.name}
               key={data?.project?.id ?? 'new'}
-              // @ts-ignore
-              defaultValue={data?.project?.name}
             />
             {errors?.error ? (
               <span className="text-red-500">{errors?.error}</span>
@@ -149,15 +128,12 @@ export default function NewProject() {
           </label>
         </div>
 
-        <div className="flex flex-col">
-          <label className="flex flex-col">
+        <div>
+          <label htmlFor="description">
             Description
-            <textarea
-              name="description"
-              // @ts-ignore
-              key={data?.project?.id ?? 'new'}
-              // defaultValue={data?.project?.description ?? ''}
-            />
+            <textarea name="description" key={data?.project?.id ?? 'new'}>
+              {data?.project?.description ?? 'Placeholder'}
+            </textarea>
           </label>
         </div>
 
@@ -178,7 +154,6 @@ export default function NewProject() {
             type="submit"
             name="intent"
             value={isNewProject ? 'create' : 'update'}
-            className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
             disabled={isCreating || isUpdating}
           >
             {isNewProject ? (isCreating ? 'Creating...' : 'Create') : null}
