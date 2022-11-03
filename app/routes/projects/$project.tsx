@@ -1,11 +1,12 @@
 import type { ActionArgs, ActionFunction, LoaderArgs } from '@remix-run/node';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { json, redirect } from '@remix-run/node';
 import {
   Form,
   Link,
   useActionData,
   useLoaderData,
+  useNavigate,
   useTransition,
 } from '@remix-run/react';
 import invariant from 'tiny-invariant';
@@ -31,7 +32,10 @@ import {
   Textarea,
   ButtonGroup,
   useColorModeValue,
+  IconButton,
 } from '@chakra-ui/react';
+import { CloseIcon, AddIcon } from '@chakra-ui/icons';
+import type { Project } from '@prisma/client';
 
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
@@ -41,7 +45,7 @@ export const loader = async ({ params }: LoaderArgs) => {
 
   const project = await getProjectByName(params.project);
   if (!project) {
-    throw new Response('Not found', { status: 404 });
+    return redirect('/projects');
   }
 
   return json({ project });
@@ -63,9 +67,8 @@ export const action: ActionFunction = async ({
 
   const formData = await request.formData();
   const intent = formData.get('intent');
-
   const project = await getProjectByName(params.project);
-
+  !project && json({ error: 'Project not found' }, { status: 404 });
   if (project && intent === 'delete') {
     const deletedProject = await deleteProjectById(project.id);
     json({
@@ -74,17 +77,14 @@ export const action: ActionFunction = async ({
     });
     return redirect('/projects');
   }
-
   const name = formData.get('name');
   const description = formData.get('description');
   if (typeof description !== 'string') {
     return json({ error: 'Description must be a string' }, { status: 400 });
   }
-
   if (typeof name !== 'string' || name.length === 0) {
     return json({ error: 'Project name is required' }, { status: 400 });
   }
-
   if (project && params.project === 'new') {
     return json(
       { error: `This project name "${name}" is already taken` },
@@ -96,42 +96,68 @@ export const action: ActionFunction = async ({
     case 'create':
       const newProject = await createProject({ userId, name, description });
 
-      return newProject
-        ? json({ project: newProject })
-        : json({ error: 'Error creating project' }, { status: 400 });
-    case 'update':
-      if (project?.id) {
-        const updatedProject = await db.project.update({
-          where: {
-            id: project.id,
-          },
-          data: { name, description },
-        });
-
-        return updatedProject
-          ? json({ project: updatedProject })
-          : json({ error: 'Unable to update project' }, { status: 400 });
+      if (newProject) {
+        return redirect(`/projects/view/${newProject.name}`);
+      } else {
+        return json({ error: 'Failed to create project' }, { status: 500 });
       }
-
+    case 'update':
+      const updatedProject = await db.project.update({
+        where: { id: project?.id },
+        data: { name, description },
+      });
+      if (updatedProject) {
+        return redirect(`/projects//view/${updatedProject.name}`);
+      } else {
+        return json({ error: 'Failed to update project' }, { status: 500 });
+      }
     default:
       return json({ error: 'Invalid intent' }, { status: 400 });
   }
 };
 
+type KeyboardAction = {
+  key?: string;
+};
+
+const useKeyPress = (targetKey: KeyboardAction['key']) => {
+  const [keyPressed, setKeyPressed] = useState(false);
+
+  const downHandler = ({ key }: KeyboardAction) => {
+    if (key === targetKey) setKeyPressed(true);
+  };
+
+  const upHandler = ({ key }: KeyboardAction) => {
+    if (key === targetKey) setKeyPressed(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', downHandler);
+    window.addEventListener('keyup', upHandler);
+
+    return () => {
+      window.removeEventListener('keydown', downHandler);
+      window.removeEventListener('keyup', upHandler);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return keyPressed;
+};
+
 export default function ProjectRoute() {
+  const navigate = useNavigate();
   const loadedData = useLoaderData<typeof loader>();
-  const [description, setDescription] = useState('');
-  console.log('loadedData:', loadedData);
-
-  const loadedDescription = loadedData.project?.description;
-
+  const escapePressed = useKeyPress('Escape');
   const actionResults = useActionData<typeof action>();
-  console.log('actionData:', actionResults);
-
   const transition = useTransition();
-  // console.log('transition:', transition);
 
-  const busy = Boolean(transition.submission);
+  useEffect(() => {
+    if (escapePressed && transition.state === 'idle') {
+      navigate('/projects');
+    }
+  }, [escapePressed]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // const busy = Boolean(transition.submission);
   const isCreating = transition.submission?.formData.get('intent') === 'create';
   const isUpdating = transition.submission?.formData.get('intent') === 'update';
   const isDeleting = transition.submission?.formData.get('intent') === 'delete';
@@ -148,9 +174,15 @@ export default function ProjectRoute() {
       boxShadow="md"
       rounded="2xl"
     >
-      <Link to="view" reloadDocument>
-        View the preview
-      </Link>
+      <IconButton
+        as={Link}
+        aria-label="close create project form"
+        icon={<CloseIcon />}
+        position="relative"
+        left="90%"
+        to="/projects"
+      />
+
       <Text fontSize="1.5rem" mb="24px">
         Create New Project
       </Text>

@@ -90,7 +90,7 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
           {projectNames.map(projectName => (
             <ListItem key={projectName} color={linkColor} fontWeight="semibold">
               <ListIcon as={TbLayoutBoardSplit} />
-              <Link to={projectName}>{projectName}</Link>
+              <Link to={`view/${projectName}`}>{projectName}</Link>
             </ListItem>
           ))}
           <ListItem color="primary.900" fontWeight="bold">
