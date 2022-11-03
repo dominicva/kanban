@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { withEmotionCache } from '@emotion/react';
-import { ChakraProvider, Box, useColorModeValue } from '@chakra-ui/react';
+import { ChakraProvider, Box } from '@chakra-ui/react';
 import {
   Links,
   LiveReload,

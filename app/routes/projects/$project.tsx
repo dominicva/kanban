@@ -1,5 +1,5 @@
 import type { ActionArgs, ActionFunction, LoaderArgs } from '@remix-run/node';
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { json, redirect } from '@remix-run/node';
 import {
   Form,
@@ -10,7 +10,7 @@ import {
   useTransition,
 } from '@remix-run/react';
 import invariant from 'tiny-invariant';
-import { ErrorFallback } from '~/components';
+import ErrorFallback from '~/components/ErrorFallback';
 import {
   createProject,
   deleteProjectById,
@@ -25,18 +25,14 @@ import {
   Button,
   FormControl,
   FormLabel,
-  FormHelperText,
-  FormErrorIcon,
   FormErrorMessage,
   Input,
-  Textarea,
-  ButtonGroup,
   useColorModeValue,
   IconButton,
-  useDisclosure,
 } from '@chakra-ui/react';
-import { CloseIcon, AddIcon } from '@chakra-ui/icons';
-import type { Project } from '@prisma/client';
+import { CloseIcon } from '@chakra-ui/icons';
+import useKeyPress from '~/hooks/useKeyPress';
+import useOutsideClickNavigate from '~/hooks/useOutsideClickNavigate';
 
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
@@ -117,63 +113,12 @@ export const action: ActionFunction = async ({
   }
 };
 
-type KeyboardAction = {
-  key?: string;
-};
-
-const useKeyPress = (targetKey: KeyboardAction['key']) => {
-  const [keyPressed, setKeyPressed] = useState(false);
-
-  const downHandler = ({ key }: KeyboardAction) => {
-    if (key === targetKey) setKeyPressed(true);
-  };
-
-  const upHandler = ({ key }: KeyboardAction) => {
-    if (key === targetKey) setKeyPressed(false);
-  };
-
-  useEffect(() => {
-    window.addEventListener('keydown', downHandler);
-    window.addEventListener('keyup', upHandler);
-
-    return () => {
-      window.removeEventListener('keydown', downHandler);
-      window.removeEventListener('keyup', upHandler);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return keyPressed;
-};
-
-/**
- * Hook that alerts clicks outside of the passed ref
- */
-function useOutsideAlerter(ref: React.RefObject<HTMLDivElement>) {
-  const navigate = useNavigate();
-  useEffect(() => {
-    /**
-     * Alert if clicked on outside of element
-     */
-    function handleClickOutside(event: any) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        navigate('/projects');
-      }
-    }
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref, navigate]);
-}
-
 /**
  * Component that alerts if you click outside of it
  */
-function OutsideAlerter(props: React.ComponentPropsWithRef<'div'>) {
+function OutsideNavigator(props: React.ComponentPropsWithRef<'div'>) {
   const wrapperRef = useRef(null);
-  useOutsideAlerter(wrapperRef);
+  useOutsideClickNavigate(wrapperRef);
 
   return <div ref={wrapperRef}>{props.children}</div>;
 }
@@ -191,14 +136,13 @@ export default function ProjectRoute() {
     }
   }, [escapePressed]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const busy = Boolean(transition.submission);
   const isCreating = transition.submission?.formData.get('intent') === 'create';
   const isUpdating = transition.submission?.formData.get('intent') === 'update';
   const isDeleting = transition.submission?.formData.get('intent') === 'delete';
   const isNewProject = loadedData.project === null;
 
   return (
-    <OutsideAlerter>
+    <OutsideNavigator>
       <Box
         p={10}
         pb={12}
@@ -288,7 +232,7 @@ export default function ProjectRoute() {
           </Flex>
         </Form>
       </Box>
-    </OutsideAlerter>
+    </OutsideNavigator>
   );
 }
 

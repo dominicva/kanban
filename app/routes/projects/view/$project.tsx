@@ -1,10 +1,10 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Box, Button, IconButton } from '@chakra-ui/react';
+import { Box, IconButton } from '@chakra-ui/react';
 import { Link, useLoaderData } from '@remix-run/react';
-import { getProjectByName } from '~/models/project.server';
 import { marked } from 'marked';
 import { EditIcon } from '@chakra-ui/icons';
+import { getProjectByName } from '~/models/project.server';
 
 export const loader = async ({ params }: LoaderArgs) => {
   const project = await getProjectByName(params.project);

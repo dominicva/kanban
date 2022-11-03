@@ -1,6 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node';
 import { marked } from 'marked';
-import { json } from '@remix-run/node';
 import { getProjectByName } from '~/models/project.server';
 
 export const loader: LoaderFunction = async ({ params }) => {
