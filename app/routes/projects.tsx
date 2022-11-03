@@ -1,6 +1,5 @@
-import type { Prisma, Project, User } from '@prisma/client';
+import type { Project, User } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
-import { useRef } from 'react';
 import { redirect, json } from '@remix-run/node';
 import { Outlet, useLoaderData, Link, Form } from '@remix-run/react';
 import { getAllProjects } from '~/models/project.server';
@@ -9,15 +8,10 @@ import { getUser, logout } from '~/utils/session.server';
 import {
   Box,
   Button,
-  Input,
   useColorMode,
   List,
   ListItem,
   ListIcon,
-  OrderedList,
-  UnorderedList,
-  useDisclosure,
-  IconButton,
   Switch,
   Heading,
   Text,
@@ -27,7 +21,7 @@ import {
   Grid,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { HiEye, HiEyeOff } from 'react-icons/hi';
+import { HiEyeOff } from 'react-icons/hi';
 import { TbLayoutBoardSplit } from 'react-icons/tb';
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -54,7 +48,6 @@ export const action = async ({ request }: LoaderArgs) => {
 
 function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
   const { toggleColorMode } = useColorMode();
-  const { isOpen, onToggle, onClose } = useDisclosure();
 
   const linkColor = useColorModeValue('gray.700', 'gray.200');
 
@@ -65,9 +58,10 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
       flexDir="column"
       justifyContent="space-between"
       position="absolute"
-      top="98px"
+      h="100vh"
       left={0}
       bottom={0}
+      zIndex={1}
       width="250px"
       borderRightWidth="1px"
       overflowY="auto"
@@ -78,6 +72,14 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
       p={6}
     >
       <Box as="nav">
+        <Box
+          fontSize="2xl"
+          fontWeight="semibold"
+          letterSpacing={1}
+          marginBottom={12}
+        >
+          <Link to="/">Kanban</Link>
+        </Box>
         <Text
           style={{ fontVariant: 'small-caps' }}
           color="gray.400"
@@ -123,7 +125,6 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
           variant="ghost"
           leftIcon={<HiEyeOff />}
           color={useColorModeValue('gray.500', 'whiteAlpha.600')}
-          onClick={onClose}
         >
           Hide sidebar
         </Button>
@@ -132,15 +133,25 @@ function Sidebar({ projectNames }: { projectNames: Project['name'][] }) {
   );
 }
 
-function Header({ user }: { user: User | any }) {
+function Header({
+  user,
+  project,
+}: {
+  user: User | any;
+  project: Project | any;
+}) {
   return (
-    <Box as="header" p="6" borderBottomWidth="1px" gridColumn="span 2">
+    <Box
+      ml="250px"
+      as="header"
+      p="6"
+      borderBottomWidth="1px"
+      gridColumn="span 2"
+    >
       <Flex justifyContent="space-between" alignItems="center">
-        <Link to="/">
-          <Box as="h1" fontSize="2xl" fontWeight="semibold" letterSpacing={1}>
-            Kanban
-          </Box>
-        </Link>
+        <Heading as="h2" size="md" fontWeight="semibold">
+          {project?.name}
+        </Heading>
         <Flex alignItems="center" gap={8}>
           <Box>
             <Text fontSize="xs" fontWeight="thin" mb={1}>
@@ -163,13 +174,10 @@ function Header({ user }: { user: User | any }) {
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
-  const { toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef(null);
 
   return (
     <Grid gridTemplateColumns="250px 1fr">
-      {user && <Header user={user} />}
+      {user && projects[0].name && <Header user={user} project={projects[0]} />}
 
       <Sidebar projectNames={projects.map(project => project.name)} />
 
