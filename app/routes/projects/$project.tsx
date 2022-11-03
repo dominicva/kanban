@@ -107,7 +107,7 @@ export const action: ActionFunction = async ({
         data: { name, description },
       });
       if (updatedProject) {
-        return redirect(`/projects//view/${updatedProject.name}`);
+        return redirect(`/projects/view/${updatedProject.name}`);
       } else {
         return json({ error: 'Failed to update project' }, { status: 500 });
       }
@@ -184,7 +184,7 @@ export default function ProjectRoute() {
       />
 
       <Text fontSize="1.5rem" mb="24px">
-        Create New Project
+        {isNewProject ? 'Create new project' : 'Edit project'}
       </Text>
       <Form method="post">
         <Flex flexDir="column" gap={5}>
