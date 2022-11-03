@@ -19,9 +19,16 @@ export default function ProjectsIndex() {
     <Box>
       {show ? (
         <Flex flexDirection={'column'} alignItems={'center'}>
-          <Text>Click one of the project links to see a preview here...</Text>
+          <Text textStyle="md">
+            Click one of the project links to see a preview here...
+          </Text>
           <Text>Or</Text>
-          <Button as={Link} to={'/projects/new'}>
+          <Button
+            as={Link}
+            to="/projects/new"
+            variant="custom"
+            colorScheme="_purple"
+          >
             Create a new project
           </Button>
         </Flex>

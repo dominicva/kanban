@@ -180,7 +180,7 @@ export default function IndexRoute() {
               </Text>
               <Button
                 variant="link"
-                textColor={useColorModeValue('primary.900', 'primary.700')}
+                textColor={useColorModeValue('_purple.700', '_purple.700')}
                 onClick={() => setLoginType(isLogin ? 'signup' : 'login')}
               >
                 {isLogin ? 'Sign up' : 'Log in'}
@@ -208,8 +208,8 @@ export default function IndexRoute() {
                 type="submit"
                 name="intent"
                 value={loginType}
-                variant="custom"
-                colorScheme="primary"
+                variant="primary"
+                colorScheme="_purple"
                 width="full"
                 my={6}
               >

@@ -27,6 +27,7 @@ export default function PasswordInput({
         <Input type={showPassword ? 'text' : 'password'} name="password" />
         <InputRightElement>
           <IconButton
+            variant={'icon'}
             aria-label={`${showPassword ? 'Hide' : 'Show'} password`}
             icon={showPassword ? <HiEyeOff /> : <HiEye />}
             onClick={() => setShowPassword(!showPassword)}

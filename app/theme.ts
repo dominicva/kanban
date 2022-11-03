@@ -24,42 +24,76 @@ const customSwitch = defineStyle(props => {
   };
 });
 
-const customVariant = defineStyle(props => {
-  const { colorScheme: c } = props;
-  return {
-    bg: `${c}.900`,
-    color: 'white',
+const Button = defineStyleConfig({
+  // the styles all buttons have in common
+  baseStyle: {
     fontWeight: 'bold',
     fontFamily: 'Plus Jakarta Sans',
-    fontSize: '13px',
-    px: '32px',
+    borderRadius: '0px',
     transition: 'transform 0.15s ease-out, background 0.15s ease-out',
-    _dark: {
-      bg: `${c}.900`,
-      _hover: {
-        bg: `${c}.600`,
-      },
-    },
     _hover: {
-      bg: `${c}.700`,
       transform: 'scale(1.05)',
-      _dark: {
-        bg: `${c}.300`,
-      },
     },
     _active: {
-      bg: `${c}.700`,
-      transform: 'scale(1, 1)',
-      _dark: {
-        bg: `${c}.400`,
+      transform: 'scale(1,1)',
+    },
+  },
+  // two sides: lg and sm
+  sizes: {
+    lg: {
+      fontSize: '15px',
+      px: '60px',
+      py: '16px',
+      h: '48px',
+    },
+    sm: {
+      fontSize: '13px',
+      px: '60px',
+      py: '8px',
+      h: '40px',
+    },
+  },
+  // two variants: primary and secondary
+  variants: {
+    primary: {
+      borderRadius: 'full',
+      bg: '_purple.700',
+      color: 'white',
+      _hover: {
+        bg: '_purple.400',
+        _dark: {
+          bg: '_purple.400',
+        },
+      },
+      _active: {
+        bg: '_purple.700',
+        _dark: {
+          bg: '_purple.400',
+        },
       },
     },
-  };
-});
-
-export const buttonTheme = defineStyleConfig({
-  variants: {
-    custom: customVariant,
+    secondary: {
+      borderRadius: 'full',
+      bg: 'gray.100',
+      color: '_purple.700',
+      _hover: {
+        bg: '_purple.50',
+        _dark: {
+          bg: 'white',
+        },
+      },
+      _active: {
+        bg: '_purple.50',
+        _dark: {
+          bg: 'white',
+        },
+      },
+    },
+  },
+  // the default size and variant values
+  defaultProps: {
+    size: 'lg',
+    variant: 'primary',
   },
 });
 
@@ -75,35 +109,86 @@ const theme: ThemeConfig = extendTheme({
     useSystemColorMode: true,
   },
   colors: {
-    primary: {
-      50: '#E0DFF4',
-      100: '#eeedf9ff',
-      200: '#dcdbf3ff',
-      300: '#cbcaecff',
-      400: '#bab8e6ff',
-      500: '#a8a6e0ff',
-      600: '#9794daff',
-      700: '#8683d3ff',
-      800: '#7471cdff',
-      900: '#635fc7ff',
+    _gray: {
+      50: '#f4f7fd',
+      100: '#dcdfe6',
+      200: '#c5c7cf',
+      300: '#adb0b7',
+      400: '#9698a0',
+      500: '#7e8089',
+      600: '#676872',
+      700: '#4f515a',
+      800: '#383943',
+      900: '#20212c',
     },
-    customRed: {
-      50: '#FDEEEEff',
-      100: '#FBDDDDff',
-      200: '#F9CCCCff',
-      300: '#F7BBBBff',
-      400: '#F5AAAAff',
-      500: '#F29999ff',
-      600: '#F08888ff',
-      700: '#EE7777ff',
-      800: '#EC6666ff',
-      900: '#EA5555ff',
+    _red: {
+      50: '#fbdede',
+      100: '#fbdbdb',
+      200: '#f8c9c9',
+      300: '#f6b6b6',
+      400: '#ff9898',
+      500: '#ef8080',
+      600: '#ed6e6e',
+      700: '#ea5555',
+      800: '#e63737',
+      900: '#da1b1b',
+    },
+    _purple: {
+      50: '#c4c1ff',
+      100: '#bebbff',
+      200: '#b7b4ff',
+      300: '#b0acff',
+      400: '#a8a4ff',
+      500: '#928eec',
+      600: '#7c78d8',
+      700: '#635fc7',
+      800: '#4e4abf',
+      900: '#3e3aa6',
     },
   },
 
   components: {
-    Button: buttonTheme,
+    Button,
     Switch: switchTheme,
+  },
+
+  textStyles: {
+    h1: {
+      fontSize: ['24px', '32px', '40px'],
+      fontWeight: 'bold',
+      lineHeight: '1.25',
+    },
+    h2: {
+      fontSize: ['18px', '24px', '28px'],
+      fontWeight: 'bold',
+      lineHeight: '1.25',
+    },
+    h3: {
+      fontSize: ['15px', '18px', '20px'],
+      fontWeight: 'bold',
+      lineHeight: '1.25',
+    },
+    h4: {
+      fontSize: ['13px', '15px', '16px'],
+      fontWeight: 'bold',
+      lineHeight: '1.25',
+      kerning: '2.4px',
+    },
+    lg: {
+      fontSize: ['15px', '18px', '20px'],
+      fontWeight: 'medium',
+      lineHeight: '1.5',
+    },
+    md: {
+      fontSize: ['13px', '15px', '16px'],
+      fontWeight: 'medium',
+      lineHeight: '1.5',
+    },
+    sm: {
+      fontSize: ['11px', '13px', '14px'],
+      fontWeight: 'medium',
+      lineHeight: '1.5',
+    },
   },
 });
 

@@ -149,7 +149,7 @@ export default function ProjectRoute() {
         maxWidth="480px"
         mx="auto"
         mt="48px"
-        bg={useColorModeValue('gray.50', 'gray.900')}
+        bg={useColorModeValue('_gray.50', '_gray.900')}
         boxShadow="md"
         rounded="2xl"
       >
@@ -206,7 +206,7 @@ export default function ProjectRoute() {
                   name="intent"
                   value="delete"
                   variant="custom"
-                  colorScheme="customRed"
+                  colorScheme="_red"
                   borderRadius="full"
                   disabled={isDeleting}
                   width="100%"
@@ -221,7 +221,7 @@ export default function ProjectRoute() {
                 value={isNewProject ? 'create' : 'update'}
                 disabled={isCreating || isUpdating}
                 variant="custom"
-                colorScheme="primary"
+                colorScheme="_purple"
                 borderRadius="full"
                 width="100%"
               >

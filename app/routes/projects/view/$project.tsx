@@ -32,6 +32,8 @@ export default function ProjectView() {
         as={Link}
         to={`/projects/${project?.name}`}
         icon={<EditIcon />}
+        variant="custom"
+        colorScheme="_purple"
       />
     </Box>
   );
