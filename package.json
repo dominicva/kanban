@@ -21,9 +21,11 @@
     "@remix-run/node": "^1.7.4",
     "@remix-run/react": "^1.7.4",
     "@remix-run/serve": "^1.7.4",
+    "@types/marked": "4.0.7",
     "bcryptjs": "2.4.3",
     "framer-motion": "6.5.1",
     "isbot": "^3.5.4",
+    "marked": "4.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "4.6.0"

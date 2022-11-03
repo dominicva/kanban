@@ -1,7 +1,9 @@
 import type { ActionArgs, ActionFunction, LoaderArgs } from '@remix-run/node';
+import { useState } from 'react';
 import { json, redirect } from '@remix-run/node';
 import {
   Form,
+  Link,
   useActionData,
   useLoaderData,
   useTransition,
@@ -51,28 +53,35 @@ export const action: ActionFunction = async ({
 }: ActionArgs) => {
   const userId = await getUserId(request);
   if (!userId) {
+    json({ error: 'User not logged in' }, { status: 401 });
     return redirect('/login');
+  }
+
+  if (typeof params.project !== 'string') {
+    return json({ error: 'Project name is required' }, { status: 400 });
   }
 
   const formData = await request.formData();
   const intent = formData.get('intent');
 
-  invariant(typeof params.project === 'string', 'Project name is required');
-
   const project = await getProjectByName(params.project);
 
   if (project && intent === 'delete') {
-    await deleteProjectById(project.id);
+    const deletedProject = await deleteProjectById(project.id);
+    json({
+      success: true,
+      message: `Project ${deletedProject.name} deleted`,
+    });
     return redirect('/projects');
   }
 
   const name = formData.get('name');
   const description = formData.get('description');
-  invariant(typeof description === 'string', 'Description must be a string');
+  if (typeof description !== 'string') {
+    return json({ error: 'Description must be a string' }, { status: 400 });
+  }
 
-  const nameValid = typeof name === 'string' && name.length > 0;
-
-  if (!nameValid) {
+  if (typeof name !== 'string' || name.length === 0) {
     return json({ error: 'Project name is required' }, { status: 400 });
   }
 
@@ -85,8 +94,11 @@ export const action: ActionFunction = async ({
 
   switch (intent) {
     case 'create':
-      await createProject({ userId, name, description });
-      return redirect(`/projects/${name}`);
+      const newProject = await createProject({ userId, name, description });
+
+      return newProject
+        ? json({ project: newProject })
+        : json({ error: 'Error creating project' }, { status: 400 });
     case 'update':
       if (project?.id) {
         const updatedProject = await db.project.update({
@@ -97,7 +109,7 @@ export const action: ActionFunction = async ({
         });
 
         return updatedProject
-          ? redirect(`/projects/${updatedProject.name}`)
+          ? json({ project: updatedProject })
           : json({ error: 'Unable to update project' }, { status: 400 });
       }
 
@@ -107,15 +119,23 @@ export const action: ActionFunction = async ({
 };
 
 export default function ProjectRoute() {
-  const data = useLoaderData<typeof loader>();
-  const errors = useActionData<typeof action>();
+  const loadedData = useLoaderData<typeof loader>();
+  const [description, setDescription] = useState('');
+  console.log('loadedData:', loadedData);
+
+  const loadedDescription = loadedData.project?.description;
+
+  const actionResults = useActionData<typeof action>();
+  console.log('actionData:', actionResults);
 
   const transition = useTransition();
+  // console.log('transition:', transition);
 
+  const busy = Boolean(transition.submission);
   const isCreating = transition.submission?.formData.get('intent') === 'create';
   const isUpdating = transition.submission?.formData.get('intent') === 'update';
   const isDeleting = transition.submission?.formData.get('intent') === 'delete';
-  const isNewProject = data.project === null;
+  const isNewProject = loadedData.project === null;
 
   return (
     <Box
@@ -128,33 +148,42 @@ export default function ProjectRoute() {
       boxShadow="md"
       rounded="2xl"
     >
+      <Link to="view" reloadDocument>
+        View the preview
+      </Link>
       <Text fontSize="1.5rem" mb="24px">
         Create New Project
       </Text>
       <Form method="post">
         <Flex flexDir="column" gap={5}>
           <Box>
-            <FormControl isInvalid={Boolean(errors?.error)}>
+            <FormControl isInvalid={Boolean(actionResults?.error)}>
               <FormLabel htmlFor="name">Project Name</FormLabel>
               <Input
                 type="text"
                 name="name"
-                defaultValue={data.project?.name}
-                key={data?.project?.id ?? 'new'}
+                defaultValue={loadedData.project?.name}
+                key={loadedData.project?.id ?? 'new'}
               />
-              <FormErrorMessage>{errors?.error}</FormErrorMessage>
+              <FormErrorMessage>{actionResults?.error}</FormErrorMessage>
             </FormControl>
           </Box>
 
           <Box>
             <FormControl>
               <FormLabel htmlFor="description">Description</FormLabel>
-              <Textarea
+              <textarea
+                id="description"
+                rows={8}
                 name="description"
-                size="lg"
-                resize="vertical"
-                defaultValue={data.project?.description ?? ''}
-                height="150px"
+                key={loadedData?.project?.description ?? 'new'}
+                defaultValue={loadedData?.project?.description ?? ''}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '6px',
+                }}
               />
             </FormControl>
           </Box>
