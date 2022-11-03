@@ -138,7 +138,7 @@ export default function IndexRoute() {
 
   return (
     <Box w="100%" h="100%" bg={useColorModeValue('gray.200', 'gray.800')}>
-      <Box m={4} pos="absolute" right={0} id="here">
+      <Box m={4} pos="absolute" right={0}>
         <IconButton
           aria-label="Change color mode"
           size="lg"
