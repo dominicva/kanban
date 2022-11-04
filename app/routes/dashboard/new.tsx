@@ -70,7 +70,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function NewProject() {
   const loadedData = useLoaderData();
-  console.log('loadedData:', loadedData);
+  // console.log('loadedData:', loadedData);
 
   // const { project, crud } = loadedData;
   const actionResults = useActionData();

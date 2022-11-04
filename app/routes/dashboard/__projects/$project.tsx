@@ -8,6 +8,7 @@ import {
   useActionData,
   useLoaderData,
   useNavigate,
+  useParams,
   useTransition,
 } from '@remix-run/react';
 import invariant from 'tiny-invariant';
@@ -38,9 +39,11 @@ import useKeyPress from '~/hooks/useKeyPress';
 import useOutsideClickNavigate from '~/hooks/useOutsideClickNavigate';
 
 export default function ProjectRoute() {
+  const params = useParams();
+  // console.log('params', params);
   return (
     <Box>
-      <h1>This is where the board goes</h1>
+      <h1>Welcome to {params?.project ?? 'this project...'}</h1>
 
       <Outlet />
     </Box>
