@@ -36,7 +36,7 @@ export default function ProjectsRoute() {
 
   return (
     <Grid gridTemplateColumns="250px 1fr">
-      <Header user={user} headerProject={headerProject} />
+      <Header username={user?.username} headerProject={headerProject} />
 
       <Sidebar projectNames={projects.map(project => project.name)} />
 

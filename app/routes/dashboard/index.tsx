@@ -3,7 +3,8 @@ import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import ErrorFallback from '~/components/ErrorFallback';
 
-export default function ProjectsIndex() {
+export default function DashboardIndex() {
+  console.log('DashboardIndex');
   const [show, setShow] = useState(true);
 
   useEffect(() => {

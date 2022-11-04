@@ -31,19 +31,25 @@ import {
 import { CloseIcon } from '@chakra-ui/icons';
 import { db } from '~/utils/db.server';
 
-// export const loader = async ({ request }: LoaderArgs) => {
-//   const userId = await getUserId(request);
+export const loader = async ({ request, params }: LoaderArgs) => {
+  const userId = await getUserId(request);
+  console.log('params', params);
+  // if (params.project === 'new' || typeof params.project === 'undefined') {
+  //   // return redirect('dashboard/new');
+  // }
+  return json({ project: null, crud: 'create', userId });
+};
 
-//   return json({ project: null, userId });
-// };
-
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   const userId = await getUserId(request);
   // const { project = null, crud = null } = params;
+  console.log('params', params);
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
   const description = String(formData.get('description')).trim();
+
+  // if (params.project  )
 
   const existingProject = await getProject({ name, userId });
 
@@ -57,11 +63,15 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: 'Something went wrong' });
   }
 
-  return redirect(`/dashboard/${newProject.name}`);
+  redirect(`dashboard/${newProject.name}`);
+  return json({ project: newProject, crud: 'create', userId });
+  // return json({ project: newProject ?? null, crud: null, userId });
 };
 
 export default function NewProject() {
-  // const loadedData = useLoaderData();
+  const loadedData = useLoaderData();
+  console.log('loadedData:', loadedData);
+
   // const { project, crud } = loadedData;
   const actionResults = useActionData();
   const transition = useTransition();
@@ -88,7 +98,7 @@ export default function NewProject() {
     >
       <IconButton
         as={Link}
-        to="dashboard"
+        to="/dashboard"
         aria-label="close create project form"
         icon={<CloseIcon />}
         position="relative"
@@ -106,8 +116,8 @@ export default function NewProject() {
               <Input
                 type="text"
                 name="name"
-                // defaultValue={project?.name}
-                // key={project?.id}
+                defaultValue={loadedData.project?.name ?? ''}
+                key={loadedData.project?.id}
               />
               <FormErrorMessage>{actionResults?.error}</FormErrorMessage>
             </FormControl>
@@ -120,8 +130,8 @@ export default function NewProject() {
                 id="description"
                 rows={8}
                 name="description"
-                // key={project?.description}
-                // defaultValue={project?.description ?? ''}
+                key={loadedData.project?.description}
+                defaultValue={loadedData.project?.description ?? ''}
                 w="100%"
                 bg="transparent"
                 border="1px solid rgba(255,255,255,0.2)"
@@ -136,7 +146,7 @@ export default function NewProject() {
             <Button
               type="submit"
               disabled={busy}
-              // variant={crud === 'create' ? 'primary' : 'secondary'}
+              variant={loadedData.crud ? 'primary' : 'secondary'}
               width="100%"
             >
               Create
