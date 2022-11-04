@@ -1,6 +1,6 @@
 import type { ActionFunction, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { ActionArgs, json } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import {
   Form,
   Link,
@@ -35,9 +35,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const { project, crud } = params;
   const userId = await getUserId(request);
   const existingProject = await getProject({ name: project, userId });
-  // console.log('project', project);
-  // console.log('crud', crud);
-  // console.log('existingProject', existingProject);
 
   if (!existingProject) {
     return redirect('/dashboard');
@@ -49,7 +46,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 const CRUD = ['create', 'read', 'update', 'delete'];
 
 export const action: ActionFunction = async ({ request, params }) => {
-  // console.log('In action');
   const userId = await getUserId(request);
   const { project, crud } = params;
   if (
@@ -57,14 +53,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     project.length === 0 ||
     !CRUD.includes(crud)
   ) {
-    // console.log('Invalid project name or crud');
     return redirect('/dashboard');
   }
-  // console.log('project', project);
-  // console.log('crud', crud);
   const existingProject = await getProject({ name: project, userId });
-
-  // console.log('existingProject', existingProject);
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
@@ -168,13 +159,6 @@ export default function ProjectCrud() {
   const { project, crud } = loadedData;
   const actionResults = useActionData();
   const transition = useTransition();
-  console.log('loader data', loadedData);
-  // console.log('project', project);
-  // console.log('crud', crud);
-  console.log('actionResults', actionResults);
-  // console.log('transition', transition);
-
-  // console.log('In ProjectCrud');
   const busy = Boolean(transition.submission);
 
   const formHeader = crudLabel(crud);

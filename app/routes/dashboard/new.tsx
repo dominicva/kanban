@@ -1,6 +1,6 @@
 import type { ActionFunction, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { ActionArgs, json } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import {
   Form,
   Link,
@@ -9,12 +9,7 @@ import {
   useTransition,
 } from '@remix-run/react';
 import { getUserId } from '~/utils/session.server';
-import {
-  createProject,
-  deleteProjectById,
-  getAllProjectNames,
-  getProject,
-} from '~/models/project.server';
+import { createProject, getProject } from '~/models/project.server';
 import {
   Box,
   Text,
@@ -29,30 +24,19 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
-import { db } from '~/utils/db.server';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const userId = await getUserId(request);
-  // console.log('params', params);
-  // if (params.project === 'new' || typeof params.project === 'undefined') {
-  //   // return redirect('dashboard/new');
-  // }
+
   return json({ project: null, crud: 'create', userId });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await getUserId(request);
-  // const { project = null, crud = null } = params;
-  // console.log('params', params);
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
   const description = String(formData.get('description')).trim();
-
-  // console.log('name', name);
-  // console.log('description', description);
-
-  // if (params.project  )
 
   const existingProject = await getProject({ name, userId });
 
@@ -61,7 +45,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const newProject = await createProject({ name, description, userId });
-  // console.log('newProject:', newProject);
 
   if (!newProject) {
     return json({ error: 'Something went wrong' });
@@ -72,20 +55,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function NewProject() {
   const loadedData = useLoaderData();
-  // console.log('loadedData:', loadedData);
 
-  // const { project, crud } = loadedData;
   const actionResults = useActionData();
   const transition = useTransition();
-  // console.log('loader data', loadedData);
-  // console.log('project', project);
-  // console.log('crud', crud);
-  // console.log('actionResults', actionResults);
-  // console.log('transition', transition);
 
   const busy = Boolean(transition.submission);
-
-  // const formHeader = crudLabel(crud);
 
   return (
     <Box
@@ -153,27 +127,7 @@ export default function NewProject() {
               width="100%"
             >
               Create
-              {/* {crud === 'create'
-                ? busy
-                  ? 'Creating...'
-                  : 'Create'
-                : crud === 'update'
-                ? busy
-                  ? 'Updating...'
-                  : 'Update'
-                : null} */}
             </Button>
-
-            {/* {crud === 'update' || crud === 'delete' ? (
-              <Button
-                type="submit"
-                variant="delete"
-                disabled={busy}
-                width="100%"
-              >
-                {busy ? 'Deleting...' : 'Delete'}
-              </Button>
-            ) : null} */}
           </Flex>
         </Flex>
       </Form>

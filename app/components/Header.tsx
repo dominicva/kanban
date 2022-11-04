@@ -9,17 +9,10 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import {
-  Form,
-  Link,
-  useParams,
-  useNavigate,
-  useMatches,
-} from '@remix-run/react';
-import { MdExpandMore, MdExpandLess, MdAdd } from 'react-icons/md';
-import { redirect } from '@remix-run/node';
-import { useState, useEffect } from 'react';
+import { Form, Link, useParams } from '@remix-run/react';
+import { MdExpandMore, MdAdd } from 'react-icons/md';
 import { SlOptionsVertical } from 'react-icons/sl';
+import { logout } from '~/utils/session.server';
 
 export default function Header({
   username,
@@ -29,9 +22,6 @@ export default function Header({
   headerProject: string;
 }) {
   const params = useParams();
-
-  // const path = `/dashboard/${params.project}/update`;
-  // console.log('path', path);
 
   return (
     <Box
@@ -47,7 +37,6 @@ export default function Header({
             {params.project || headerProject}
           </Heading>
           <Button
-            // leftIcon={show ? <MdExpandLess /> : <MdExpandMore />}
             leftIcon={<MdExpandMore />}
             variant="link"
             fontSize="15px"
@@ -55,18 +44,18 @@ export default function Header({
             ml={-1}
             _hover={{ color: useColorModeValue('_purple.900', '_purple.500') }}
           >
-            {/* {show ? 'Hide' : 'Show'} project description */}
             Show project description
           </Button>
         </Flex>
         <Flex alignItems="center" gap={8}>
           <Box>
             <Text fontSize="xs" fontWeight="thin" mb={1}>
-              Logged in as
+              Logged in as @{username}
             </Text>
-            <Text fontSize="lg" fontWeight="normal" letterSpacing={1}>
-              @{username}
-            </Text>
+
+            <Button as={Link} to="/logout" variant="link" colorScheme="_purple">
+              Logout
+            </Button>
           </Box>
           <ButtonGroup alignItems="center">
             <Form action={`/dashboard/${params.project}/update`}>

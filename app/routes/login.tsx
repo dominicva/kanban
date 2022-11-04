@@ -118,7 +118,6 @@ export default function Login() {
   const actionData = useActionData<typeof action>();
   const [loginType, setLoginType] = useState<'login' | 'signup'>('login');
   const { colorMode, toggleColorMode } = useColorMode();
-  console.log('actionData', actionData);
 
   const isLogin = loginType === 'login';
   const error = actionData?.error;

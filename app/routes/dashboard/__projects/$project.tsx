@@ -1,46 +1,9 @@
-import type { ActionArgs, ActionFunction, LoaderArgs } from '@remix-run/node';
-import { useEffect, useRef } from 'react';
-import { json, redirect } from '@remix-run/node';
-import {
-  Form,
-  Link,
-  Outlet,
-  useActionData,
-  useLoaderData,
-  useNavigate,
-  useParams,
-  useTransition,
-} from '@remix-run/react';
-import invariant from 'tiny-invariant';
+import { Outlet, useParams } from '@remix-run/react';
+import { Box } from '@chakra-ui/react';
 import ErrorFallback from '~/components/ErrorFallback';
-import {
-  createProject,
-  deleteProjectById,
-  getAllProjectNames,
-  getProject,
-} from '~/models/project.server';
-import { getUserId } from '~/utils/session.server';
-import { db } from '~/utils/db.server';
-import {
-  Box,
-  Text,
-  Flex,
-  Button,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Input,
-  useColorModeValue,
-  IconButton,
-  chakra,
-} from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons';
-import useKeyPress from '~/hooks/useKeyPress';
-import useOutsideClickNavigate from '~/hooks/useOutsideClickNavigate';
 
 export default function ProjectRoute() {
   const params = useParams();
-  // console.log('params', params);
   return (
     <Box>
       <h1>Welcome to {params?.project ?? 'this project...'}</h1>

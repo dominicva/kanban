@@ -11,7 +11,6 @@ export const loader = async ({ request }) => {
 };
 
 export default function DashboardIndex() {
-  console.log('DashboardIndex');
   const [show, setShow] = useState(true);
 
   useEffect(() => {

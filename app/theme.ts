@@ -70,7 +70,6 @@ const Button = defineStyleConfig({
     },
     secondary: {
       borderRadius: 'full',
-      // px: ['32px', '40px'],
       bg: 'gray.100',
       color: '_purple.700',
       _hover: {

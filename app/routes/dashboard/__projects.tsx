@@ -18,7 +18,6 @@ export default function Projects() {
 
   const haveProject = Boolean(project?.name);
 
-  // console.log('Project', project);
   return (
     <Box>
       {haveProject ? (
