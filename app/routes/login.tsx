@@ -31,7 +31,7 @@ export const loader = async ({ request }) => {
   const userId = await getUserId(request);
 
   if (userId) {
-    return redirect('/projects');
+    return redirect('/dashboard');
   }
 
   return json({ userId: null });
@@ -76,7 +76,7 @@ export const action: ActionFunction = async ({ request }) => {
           });
         }
         console.log('New user created:', newUser);
-        return createUserSession(newUser.id, '/projects');
+        return createUserSession(newUser.id, '/dashboard');
       }
     }
     case 'login': {
@@ -100,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
             },
           });
         }
-        return createUserSession(existingUser.id, '/projects');
+        return createUserSession(existingUser.id, '/dashboard');
       }
     }
     default: {

@@ -14,13 +14,15 @@ export const getAllProjectNames = async (userId: User['id']) => {
   });
 };
 
-export const getProject = async (id: Prisma.ProjectWhereUniqueInput['id']) => {
+export const getProjectById = async (
+  id: Prisma.ProjectWhereUniqueInput['id']
+) => {
   return db.project.findUnique({
     where: { id },
   });
 };
 
-export const getProjectByName = async ({
+export const getProject = async ({
   name,
   userId,
 }: {

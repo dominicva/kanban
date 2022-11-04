@@ -1,6 +1,6 @@
 import type { LoaderFunction } from '@remix-run/node';
 import { marked } from 'marked';
-import { getProjectByName } from '~/models/project.server';
+import { getProject } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -8,7 +8,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw new Error('Project name is required');
   }
 
-  const project = await getProjectByName({
+  const project = await getProject({
     name: params.project,
     userId: await getUserId(request),
   });

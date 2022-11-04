@@ -12,7 +12,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request);
 
   if (!user) {
-    return redirect('/');
+    return redirect('/login');
   }
 
   const projects = await getAllProjects(user.id);
@@ -26,7 +26,7 @@ export const action = async ({ request }: LoaderArgs) => {
   if (intent === 'logout') {
     return logout(request);
   } else {
-    return redirect('/projects');
+    return redirect('/dashboard');
   }
 };
 

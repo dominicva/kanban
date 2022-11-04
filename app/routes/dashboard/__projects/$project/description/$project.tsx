@@ -4,7 +4,7 @@ import { Box, IconButton } from '@chakra-ui/react';
 import { Link, useLoaderData } from '@remix-run/react';
 import { marked } from 'marked';
 import { EditIcon } from '@chakra-ui/icons';
-import { getProjectByName } from '~/models/project.server';
+import { getProject } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 import invariant from 'tiny-invariant';
 
@@ -12,7 +12,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
   const userId = await getUserId(request);
 
-  const project = await getProjectByName({ name: params.project, userId });
+  const project = await getProject({ name: params.project, userId });
 
   const html = marked(`# ${project?.name}\n${project?.description}`);
 

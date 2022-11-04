@@ -1,13 +1,6 @@
-import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import type { User, Project } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
-import { Form, useLoaderData } from '@remix-run/react';
-
-// export const loader = async ({ params }: LoaderArgs) => {
-//   console.log('Loader in Header component', params);
-//   return json({ params });
-// };
+import { Form, Link, useParams } from '@remix-run/react';
 
 export default function Header({
   user,
@@ -16,9 +9,7 @@ export default function Header({
   user: User | any;
   headerProject: string;
 }) {
-  // const data = useLoaderData<typeof loader>();
-  // console.log('Header component loader data', data);
-
+  const params = useParams();
   return (
     <Box
       ml="250px"
@@ -28,9 +19,13 @@ export default function Header({
       gridColumn="span 2"
     >
       <Flex justifyContent="space-between" alignItems="center">
-        <Heading as="h2" size="md" fontWeight="semibold">
-          {headerProject}
-        </Heading>
+        <Box>
+          <Heading as="h2" size="md" fontWeight="semibold">
+            {headerProject}
+            {/* {params?.project ? params.project : headerProject} */}
+          </Heading>
+          <Link to={`dashboard`}>View project description</Link>
+        </Box>
         <Flex alignItems="center" gap={8}>
           <Box>
             <Text fontSize="xs" fontWeight="thin" mb={1}>

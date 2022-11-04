@@ -74,7 +74,7 @@ export default function Sidebar({
               <ListIcon as={TbLayoutBoardSplit} />
               <Button
                 as={Link}
-                to={`view/${projectName}`}
+                to={`${projectName}`}
                 variant="link"
                 textStyle="h3"
                 // textColor={linkColor}

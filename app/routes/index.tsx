@@ -15,7 +15,7 @@ export default function IndexRoute() {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request);
-  return redirect(userId ? '/projects' : '/login');
+  return redirect(userId ? '/dashboard' : '/login');
 };
 
 export const ErrorBoundary = ({ error }: { error: Error }) => {
