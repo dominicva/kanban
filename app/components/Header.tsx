@@ -30,6 +30,9 @@ export default function Header({
 }) {
   const params = useParams();
 
+  // const path = `/dashboard/${params.project}/update`;
+  // console.log('path', path);
+
   return (
     <Box
       ml="250px"
@@ -65,20 +68,24 @@ export default function Header({
               @{username}
             </Text>
           </Box>
-          <Form method="post">
-            <ButtonGroup alignItems="center">
-              <Button leftIcon={<MdAdd />} size="lg">
+          <ButtonGroup alignItems="center">
+            <Form action={`/dashboard/${params.project}/update`}>
+              <Button type="submit" leftIcon={<MdAdd />} size="lg">
                 Add new task
               </Button>
+            </Form>
+            <Form>
               <IconButton
                 aria-label="Options"
-                color="gray.500"
                 icon={<SlOptionsVertical size={20} />}
-                variant="ghost"
-                ml="4px !important"
+                variant="unstyled"
+                display="flex"
+                color="gray.500"
+                transition={'all 0.2s'}
+                _hover={{ color: 'gray.300', transform: 'scale(1.1)' }}
               />
-            </ButtonGroup>
-          </Form>
+            </Form>
+          </ButtonGroup>
         </Flex>
       </Flex>
     </Box>

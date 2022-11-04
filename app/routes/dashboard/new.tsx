@@ -33,7 +33,7 @@ import { db } from '~/utils/db.server';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const userId = await getUserId(request);
-  console.log('params', params);
+  // console.log('params', params);
   // if (params.project === 'new' || typeof params.project === 'undefined') {
   //   // return redirect('dashboard/new');
   // }
@@ -43,7 +43,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await getUserId(request);
   // const { project = null, crud = null } = params;
-  console.log('params', params);
+  // console.log('params', params);
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
@@ -61,7 +61,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const newProject = await createProject({ name, description, userId });
-  console.log('newProject:', newProject);
+  // console.log('newProject:', newProject);
 
   if (!newProject) {
     return json({ error: 'Something went wrong' });

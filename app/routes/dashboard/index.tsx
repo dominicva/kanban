@@ -5,9 +5,8 @@ import ErrorFallback from '~/components/ErrorFallback';
 import { getUserId } from '~/utils/session.server';
 import { AddIcon } from '@chakra-ui/icons';
 
-export const loader = async ({ request, params }) => {
+export const loader = async ({ request }) => {
   const userId = await getUserId(request);
-  console.log('params', params);
   return { userId };
 };
 

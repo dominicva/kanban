@@ -32,21 +32,39 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { db } from '~/utils/db.server';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
-  const { project = null, crud = null } = params;
+  const { project, crud } = params;
   const userId = await getUserId(request);
   const existingProject = await getProject({ name: project, userId });
+  // console.log('project', project);
+  // console.log('crud', crud);
+  // console.log('existingProject', existingProject);
 
   if (!existingProject) {
-    return redirect('/projects');
+    return redirect('/dashboard');
   }
 
   return json({ project: existingProject, crud });
 };
 
+const CRUD = ['create', 'read', 'update', 'delete'];
+
 export const action: ActionFunction = async ({ request, params }) => {
+  // console.log('In action');
   const userId = await getUserId(request);
-  const { project = null, crud = null } = params;
+  const { project, crud } = params;
+  if (
+    typeof project !== 'string' ||
+    project.length === 0 ||
+    !CRUD.includes(crud)
+  ) {
+    // console.log('Invalid project name or crud');
+    return redirect('/dashboard');
+  }
+  // console.log('project', project);
+  // console.log('crud', crud);
   const existingProject = await getProject({ name: project, userId });
+
+  // console.log('existingProject', existingProject);
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
@@ -60,7 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
       const deleted = await deleteProjectById(existingProject.id);
       if (deleted) {
-        return redirect('/projects');
+        return redirect('/dashboard');
       } else {
         return json({ error: 'Failed to delete project' }, { status: 500 });
       }
@@ -71,9 +89,9 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
 
       const existingProjects = await getAllProjectNames(userId);
-      const nameConflict = existingProjects.find(
-        project => project.name === name
-      );
+      const nameMatch = existingProjects.find(project => project.name === name);
+
+      const nameConflict = nameMatch && name !== existingProject.name;
 
       if (nameConflict) {
         return json({ error: 'Project name already exists' }, { status: 400 });
@@ -88,7 +106,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       });
 
       if (updated) {
-        return redirect(`/projects/view/${updated.name}`);
+        return redirect(`/dashboard/${updated.name}`);
       } else {
         return json({ error: 'Failed to update project' }, { status: 500 });
       }
@@ -103,7 +121,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
       const newProject = await createProject({ name, description, userId });
       if (newProject) {
-        return redirect(`/projects/view/${newProject.name}`);
+        return redirect(`/dashboard/${newProject.name}`);
       } else {
         return json({ error: 'Unable to create project' }, { status: 500 });
       }
@@ -129,17 +147,34 @@ const crudLabel = s => {
   }
 };
 
+const crudButton = (op, busy) => {
+  switch (op) {
+    case 'create':
+      return busy ? 'Creating...' : 'Create';
+
+    case 'update':
+      return busy ? 'Updating...' : 'Update';
+
+    case 'delete':
+      return busy ? 'Deleting...' : 'Delete';
+
+    default:
+      return 'Submit';
+  }
+};
+
 export default function ProjectCrud() {
   const loadedData = useLoaderData();
   const { project, crud } = loadedData;
   const actionResults = useActionData();
   const transition = useTransition();
-  // console.log('loader data', loadedData);
+  console.log('loader data', loadedData);
   // console.log('project', project);
   // console.log('crud', crud);
   console.log('actionResults', actionResults);
   // console.log('transition', transition);
 
+  // console.log('In ProjectCrud');
   const busy = Boolean(transition.submission);
 
   const formHeader = crudLabel(crud);
@@ -205,30 +240,17 @@ export default function ProjectCrud() {
             <Button
               type="submit"
               disabled={busy}
-              variant={crud === 'create' ? 'primary' : 'secondary'}
               width="100%"
+              variant={
+                crud === 'create'
+                  ? 'primary'
+                  : crud === 'delete'
+                  ? 'delete'
+                  : 'secondary'
+              }
             >
-              {crud === 'create'
-                ? busy
-                  ? 'Creating...'
-                  : 'Create'
-                : crud === 'update'
-                ? busy
-                  ? 'Updating...'
-                  : 'Update'
-                : null}
+              {crudButton(crud, busy)}
             </Button>
-
-            {crud === 'update' || crud === 'delete' ? (
-              <Button
-                type="submit"
-                variant="delete"
-                disabled={busy}
-                width="100%"
-              >
-                {busy ? 'Deleting...' : 'Delete'}
-              </Button>
-            ) : null}
           </Flex>
         </Flex>
       </Form>
