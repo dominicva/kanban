@@ -1,4 +1,4 @@
-import type { ThemeConfig } from '@chakra-ui/react';
+import type { StyleFunctionProps, ThemeConfig } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system';
 
@@ -42,14 +42,10 @@ const Button = defineStyleConfig({
   sizes: {
     lg: {
       fontSize: '15px',
-      px: '60px',
-      py: '16px',
       h: '48px',
     },
     sm: {
-      fontSize: '13px',
-      px: '60px',
-      py: '8px',
+      fontSize: ['13px', '15px'],
       h: '40px',
     },
   },
@@ -74,6 +70,7 @@ const Button = defineStyleConfig({
     },
     secondary: {
       borderRadius: 'full',
+      // px: ['32px', '40px'],
       bg: 'gray.100',
       color: '_purple.700',
       _hover: {
@@ -89,10 +86,26 @@ const Button = defineStyleConfig({
         },
       },
     },
+    delete: {
+      borderRadius: 'full',
+      bg: '_red.700',
+      color: 'white',
+      _hover: {
+        bg: '_red.400',
+        _dark: {
+          bg: '_red.400',
+        },
+      },
+      _active: {
+        bg: '_red.700',
+        _dark: {
+          bg: '_red.400',
+        },
+      },
+    },
   },
   // the default size and variant values
   defaultProps: {
-    size: 'lg',
     variant: 'primary',
   },
 });
@@ -149,43 +162,59 @@ const theme: ThemeConfig = extendTheme({
 
   components: {
     Button,
+    Input: {
+      variants: {
+        outline: (props: StyleFunctionProps) => {
+          const { colorScheme: c } = props;
+          return {
+            field: {
+              _focusVisible: {
+                boxShadow: `none`,
+                borderColor: `none`,
+              },
+              errorBorderColor: `yelow`,
+            },
+          };
+        },
+      },
+    },
     Switch: switchTheme,
   },
 
   textStyles: {
     h1: {
-      fontSize: ['24px', '32px', '40px'],
+      fontSize: '24px',
       fontWeight: 'bold',
       lineHeight: '1.25',
     },
     h2: {
-      fontSize: ['18px', '24px', '28px'],
+      fontSize: '18px',
       fontWeight: 'bold',
       lineHeight: '1.25',
     },
     h3: {
-      fontSize: ['15px', '18px', '20px'],
+      fontSize: '15px',
       fontWeight: 'bold',
       lineHeight: '1.25',
     },
     h4: {
-      fontSize: ['13px', '15px', '16px'],
+      fontSize: '13px',
       fontWeight: 'bold',
       lineHeight: '1.25',
       kerning: '2.4px',
     },
     lg: {
-      fontSize: ['15px', '18px', '20px'],
+      fontSize: '15px',
       fontWeight: 'medium',
       lineHeight: '1.5',
     },
     md: {
-      fontSize: ['13px', '15px', '16px'],
+      fontSize: ['13px', '15px'],
       fontWeight: 'medium',
       lineHeight: '1.5',
     },
     sm: {
-      fontSize: ['11px', '13px', '14px'],
+      fontSize: ['11px', '13px'],
       fontWeight: 'medium',
       lineHeight: '1.5',
     },

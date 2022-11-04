@@ -65,14 +65,37 @@ export default function Sidebar({
         </Text>
         <List spacing={4}>
           {projectNames.map(projectName => (
-            <ListItem key={projectName} color={linkColor} fontWeight="semibold">
+            <ListItem
+              key={projectName}
+              display="flex"
+              alignItems="center"
+              color={linkColor}
+            >
               <ListIcon as={TbLayoutBoardSplit} />
-              <Link to={`view/${projectName}`}>{projectName}</Link>
+              <Button
+                as={Link}
+                to={`view/${projectName}`}
+                variant="link"
+                textStyle="h3"
+                // textColor={linkColor}
+                justifyContent="flex-start"
+              >
+                {projectName}
+              </Button>
             </ListItem>
           ))}
-          <ListItem color="primary.900" fontWeight="bold">
-            <ListIcon as={TbLayoutBoardSplit} />
-            <Link to="new">Create new project</Link>
+          <ListItem display="flex" alignItems="center">
+            <ListIcon as={TbLayoutBoardSplit} color="_purple.900" />
+            <Button
+              as={Link}
+              to="new"
+              variant="link"
+              textStyle="h3"
+              textColor="_purple.900"
+              justifyContent="flex-start"
+            >
+              Create new project
+            </Button>
           </ListItem>
         </List>
       </Box>
@@ -89,7 +112,7 @@ export default function Sidebar({
         >
           <Icon display="block" as={SunIcon} />
           <Switch
-            colorScheme="primary"
+            colorScheme="_purple"
             variant="custom"
             onChange={toggleColorMode}
           />

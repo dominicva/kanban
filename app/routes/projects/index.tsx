@@ -1,6 +1,7 @@
 import { Link, Outlet } from '@remix-run/react';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import ErrorFallback from '~/components/ErrorFallback';
 
 export default function ProjectsIndex() {
   const [show, setShow] = useState(true);
@@ -23,12 +24,7 @@ export default function ProjectsIndex() {
             Click one of the project links to see a preview here...
           </Text>
           <Text>Or</Text>
-          <Button
-            as={Link}
-            to="/projects/new"
-            variant="custom"
-            colorScheme="_purple"
-          >
+          <Button as={Link} to="/projects/new" variant="primary">
             Create a new project
           </Button>
         </Flex>
@@ -37,4 +33,9 @@ export default function ProjectsIndex() {
       <Outlet />
     </Box>
   );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return <ErrorFallback />;
 }

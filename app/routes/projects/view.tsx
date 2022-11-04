@@ -3,7 +3,7 @@ import { Outlet } from '@remix-run/react';
 
 export default function ProjectView() {
   return (
-    <Box padding="2rem">
+    <Box>
       <Outlet />
     </Box>
   );

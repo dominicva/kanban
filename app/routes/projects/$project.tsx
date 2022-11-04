@@ -29,6 +29,7 @@ import {
   Input,
   useColorModeValue,
   IconButton,
+  chakra,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import useKeyPress from '~/hooks/useKeyPress';
@@ -155,11 +156,11 @@ export default function ProjectRoute() {
       >
         <IconButton
           as={Link}
+          to="/projects"
           aria-label="close create project form"
           icon={<CloseIcon />}
           position="relative"
           left="90%"
-          to="/projects"
         />
 
         <Text fontSize="1.5rem" mb="24px">
@@ -183,51 +184,47 @@ export default function ProjectRoute() {
             <Box>
               <FormControl>
                 <FormLabel htmlFor="description">Description</FormLabel>
-                <textarea
+                <chakra.textarea
                   id="description"
                   rows={8}
                   name="description"
                   key={loadedData?.project?.description ?? 'new'}
                   defaultValue={loadedData?.project?.description ?? ''}
-                  style={{
-                    width: '100%',
-                    background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: '6px',
-                  }}
+                  w="100%"
+                  bg="transparent"
+                  border="1px solid rgba(255,255,255,0.2)"
+                  _focusVisible={{ outline: 'none' }}
+                  padding="0.5rem"
+                  borderRadius="6px"
                 />
               </FormControl>
             </Box>
 
             <Flex gap={6} flexDir="column">
+              <Button
+                type="submit"
+                name="intent"
+                value={isNewProject ? 'create' : 'update'}
+                disabled={isCreating || isUpdating}
+                variant={isNewProject ? 'primary' : 'secondary'}
+                width="100%"
+              >
+                {isNewProject ? (isCreating ? 'Creating...' : 'Create') : null}
+                {isNewProject ? null : isUpdating ? 'Updating...' : 'Update'}
+              </Button>
+
               {isNewProject ? null : (
                 <Button
                   type="submit"
                   name="intent"
                   value="delete"
-                  variant="custom"
-                  colorScheme="_red"
-                  borderRadius="full"
+                  variant="delete"
                   disabled={isDeleting}
                   width="100%"
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </Button>
               )}
-
-              <Button
-                type="submit"
-                name="intent"
-                value={isNewProject ? 'create' : 'update'}
-                disabled={isCreating || isUpdating}
-                variant="custom"
-                colorScheme="_purple"
-                borderRadius="full"
-                width="100%"
-              >
-                {isNewProject ? (isCreating ? 'Creating...' : 'Create') : null}
-                {isNewProject ? null : isUpdating ? 'Updating...' : 'Update'}
-              </Button>
             </Flex>
           </Flex>
         </Form>
