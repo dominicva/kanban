@@ -77,7 +77,7 @@ export default function Sidebar({
                 to={`${projectName}`}
                 variant="link"
                 textStyle="h3"
-                // textColor={linkColor}
+                textColor={linkColor}
                 justifyContent="flex-start"
               >
                 {projectName}

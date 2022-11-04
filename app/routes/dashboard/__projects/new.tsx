@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: 'Something went wrong' });
   }
 
-  return redirect(`/dashboard/projects/${newProject.name}`);
+  return redirect(`/dashboard/${newProject.name}`);
 };
 
 export default function NewProject() {
@@ -88,7 +88,7 @@ export default function NewProject() {
     >
       <IconButton
         as={Link}
-        to="/projects"
+        to="dashboard"
         aria-label="close create project form"
         icon={<CloseIcon />}
         position="relative"
