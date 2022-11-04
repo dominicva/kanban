@@ -2,8 +2,10 @@ import type { User } from '@prisma/client';
 import {
   Box,
   Button,
+  ButtonGroup,
   Flex,
   Heading,
+  IconButton,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -14,9 +16,10 @@ import {
   useNavigate,
   useMatches,
 } from '@remix-run/react';
-import { MdExpandMore, MdExpandLess } from 'react-icons/md';
+import { MdExpandMore, MdExpandLess, MdAdd } from 'react-icons/md';
 import { redirect } from '@remix-run/node';
 import { useState, useEffect } from 'react';
+import { SlOptionsVertical } from 'react-icons/sl';
 
 export default function Header({
   username,
@@ -63,9 +66,18 @@ export default function Header({
             </Text>
           </Box>
           <Form method="post">
-            <Button type="submit" name="intent" value="logout">
-              Logout
-            </Button>
+            <ButtonGroup alignItems="center">
+              <Button leftIcon={<MdAdd />} size="lg">
+                Add new task
+              </Button>
+              <IconButton
+                aria-label="Options"
+                color="gray.500"
+                icon={<SlOptionsVertical size={20} />}
+                variant="ghost"
+                ml="4px !important"
+              />
+            </ButtonGroup>
           </Form>
         </Flex>
       </Flex>
