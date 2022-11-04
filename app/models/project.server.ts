@@ -1,4 +1,5 @@
 import type { Prisma, User, Project } from '@prisma/client';
+import { json } from '@remix-run/node';
 import { db } from '~/utils/db.server';
 
 export const getAllProjects = async (userId: User['id']) => {
@@ -48,7 +49,11 @@ export const getProject = async ({
 export const createProject = async (
   data: Prisma.ProjectUncheckedCreateInput
 ) => {
-  return db.project.create({ data });
+  const project = await db.project.create({ data });
+  if (!project || !project.id) {
+    return null;
+  }
+  return project;
 };
 
 export const deleteProjectById = async (

@@ -49,6 +49,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   const name = String(formData.get('name')).trim();
   const description = String(formData.get('description')).trim();
 
+  // console.log('name', name);
+  // console.log('description', description);
+
   // if (params.project  )
 
   const existingProject = await getProject({ name, userId });
@@ -58,14 +61,13 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const newProject = await createProject({ name, description, userId });
+  console.log('newProject:', newProject);
 
   if (!newProject) {
     return json({ error: 'Something went wrong' });
   }
 
-  redirect(`dashboard/${newProject.name}`);
-  return json({ project: newProject, crud: 'create', userId });
-  // return json({ project: newProject ?? null, crud: null, userId });
+  return redirect(`dashboard/${newProject.name}`);
 };
 
 export default function NewProject() {
@@ -78,7 +80,7 @@ export default function NewProject() {
   // console.log('loader data', loadedData);
   // console.log('project', project);
   // console.log('crud', crud);
-  console.log('actionResults', actionResults);
+  // console.log('actionResults', actionResults);
   // console.log('transition', transition);
 
   const busy = Boolean(transition.submission);
@@ -147,6 +149,7 @@ export default function NewProject() {
               type="submit"
               disabled={busy}
               variant={loadedData.crud ? 'primary' : 'secondary'}
+              size="lg"
               width="100%"
             >
               Create

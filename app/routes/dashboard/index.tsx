@@ -2,6 +2,14 @@ import { Link, Outlet } from '@remix-run/react';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import ErrorFallback from '~/components/ErrorFallback';
+import { getUserId } from '~/utils/session.server';
+import { AddIcon } from '@chakra-ui/icons';
+
+export const loader = async ({ request, params }) => {
+  const userId = await getUserId(request);
+  console.log('params', params);
+  return { userId };
+};
 
 export default function DashboardIndex() {
   console.log('DashboardIndex');
@@ -20,12 +28,17 @@ export default function DashboardIndex() {
   return (
     <Box>
       {show ? (
-        <Flex flexDirection={'column'} alignItems={'center'}>
-          <Text textStyle="md">
-            Click one of the project links to see a preview here...
-          </Text>
-          <Text>Or</Text>
-          <Button as={Link} to="/dashboard/new" variant="primary">
+        <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
+          <Text fontSize={'2xl'}>Welcome to your dashboard!</Text>
+
+          <Button
+            as={Link}
+            to="/dashboard/new"
+            variant="primary"
+            leftIcon={<AddIcon />}
+            size="lg"
+            px={10}
+          >
             Create a new project
           </Button>
         </Flex>
