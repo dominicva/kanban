@@ -1,13 +1,12 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { redirect, json } from '@remix-run/node';
-import { Outlet, useLoaderData, useNavigate } from '@remix-run/react';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import { Box, Grid } from '@chakra-ui/react';
 import { getAllProjects } from '~/models/project.server';
 import { getUser, logout } from '~/utils/session.server';
 import Sidebar from '~/components/Sidebar';
 import Header from '~/components/Header';
 import ErrorFallback from '~/components/ErrorFallback';
-import { useEffect } from 'react';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request);
@@ -34,11 +33,6 @@ export const action = async ({ request }: LoaderArgs) => {
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
   const headerProject = projects.length > 0 ? projects[0].name : '';
-  // const naviate = useNavigate();
-
-  // if (headerProject) {
-  //   naviate(`/projects/view/${headerProject}`);
-  // }
 
   return (
     <Grid gridTemplateColumns="250px 1fr">
@@ -54,7 +48,6 @@ export default function ProjectsRoute() {
 }
 
 export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.log('Error boundary in /projects');
   console.error(error);
   return <ErrorFallback />;
 };

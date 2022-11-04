@@ -1,9 +1,16 @@
-import type { Prisma, User } from '@prisma/client';
+import type { Prisma, User, Project } from '@prisma/client';
 import { db } from '~/utils/db.server';
 
 export const getAllProjects = async (userId: User['id']) => {
   return db.project.findMany({
     where: { userId },
+  });
+};
+
+export const getAllProjectNames = async (userId: User['id']) => {
+  return db.project.findMany({
+    where: { userId },
+    select: { name: true },
   });
 };
 
@@ -13,11 +20,26 @@ export const getProject = async (id: Prisma.ProjectWhereUniqueInput['id']) => {
   });
 };
 
-export const getProjectByName = async (
-  name: Prisma.ProjectWhereUniqueInput['name']
-) => {
-  return db.project.findUnique({
-    where: { name },
+export const getProjectByName = async ({
+  name,
+  userId,
+}: {
+  name: Project['name'];
+  userId: User['id'];
+}) => {
+  return db.project.findFirst({
+    where: {
+      AND: [
+        {
+          name: {
+            equals: name,
+          },
+          userId: {
+            equals: userId,
+          },
+        },
+      ],
+    },
   });
 };
 

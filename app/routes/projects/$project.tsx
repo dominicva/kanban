@@ -14,6 +14,7 @@ import ErrorFallback from '~/components/ErrorFallback';
 import {
   createProject,
   deleteProjectById,
+  getAllProjectNames,
   getProjectByName,
 } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
@@ -35,13 +36,15 @@ import { CloseIcon } from '@chakra-ui/icons';
 import useKeyPress from '~/hooks/useKeyPress';
 import useOutsideClickNavigate from '~/hooks/useOutsideClickNavigate';
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(params.project, 'Project name is required');
   if (params.project === 'new') {
     return json({ project: null });
   }
 
-  const project = await getProjectByName(params.project);
+  const userId = await getUserId(request);
+  const project = await getProjectByName({ name: params.project, userId });
+
   if (!project) {
     return redirect('/projects');
   }
@@ -53,64 +56,88 @@ export const action: ActionFunction = async ({
   request,
   params,
 }: ActionArgs) => {
+  !params.project && json({ error: 'Project name is required' });
+
   const userId = await getUserId(request);
+
   if (!userId) {
     json({ error: 'User not logged in' }, { status: 401 });
     return redirect('/login');
   }
 
-  if (typeof params.project !== 'string') {
+  const formData = await request.formData();
+  const name = String(formData.get('name')).trim();
+  const description = String(formData.get('description')).trim();
+  const intent = String(formData.get('intent')).trim();
+
+  if (typeof name !== 'string' || (name.length === 0 && intent !== 'delete')) {
     return json({ error: 'Project name is required' }, { status: 400 });
   }
 
-  const formData = await request.formData();
-  const intent = formData.get('intent');
-  const project = await getProjectByName(params.project);
-  !project && json({ error: 'Project not found' }, { status: 404 });
-  if (project && intent === 'delete') {
-    const deletedProject = await deleteProjectById(project.id);
-    json({
-      success: true,
-      message: `Project ${deletedProject.name} deleted`,
-    });
-    return redirect('/projects');
-  }
-  const name = formData.get('name');
-  const description = formData.get('description');
-  if (typeof description !== 'string') {
-    return json({ error: 'Description must be a string' }, { status: 400 });
-  }
-  if (typeof name !== 'string' || name.length === 0) {
-    return json({ error: 'Project name is required' }, { status: 400 });
-  }
-  if (project && params.project === 'new') {
-    return json(
-      { error: `This project name "${name}" is already taken` },
-      { status: 400 }
-    );
-  }
+  const existingProject = await getProjectByName({
+    name: params.project,
+    userId,
+  });
 
   switch (intent) {
-    case 'create':
-      const newProject = await createProject({ userId, name, description });
-
-      if (newProject) {
-        return redirect(`/projects/view/${newProject.name}`);
-      } else {
-        return json({ error: 'Failed to create project' }, { status: 500 });
+    case 'delete': {
+      if (!existingProject) {
+        return json({ error: 'Project not found' }, { status: 404 });
       }
-    case 'update':
-      const updatedProject = await db.project.update({
-        where: { id: project?.id },
-        data: { name, description },
+
+      const deleted = await deleteProjectById(existingProject.id);
+      if (deleted) {
+        return redirect('/projects');
+      } else {
+        return json({ error: 'Failed to delete project' }, { status: 500 });
+      }
+    }
+    case 'update': {
+      if (!existingProject) {
+        return json({ error: 'Project not found' }, { status: 404 });
+      }
+
+      const existingProjects = await getAllProjectNames(userId);
+      const nameConflict = existingProjects.find(
+        project => project.name === name
+      );
+
+      if (nameConflict) {
+        return json({ error: 'Project name already exists' }, { status: 400 });
+      }
+
+      const updated = await db.project.update({
+        where: { id: existingProject.id },
+        data: {
+          name,
+          description,
+        },
       });
-      if (updatedProject) {
-        return redirect(`/projects/view/${updatedProject.name}`);
+
+      if (updated) {
+        return redirect(`/projects/view/${updated.name}`);
       } else {
         return json({ error: 'Failed to update project' }, { status: 500 });
       }
-    default:
+    }
+    case 'create': {
+      if (existingProject) {
+        return json(
+          { error: `The project "${existingProject.name}" already exists` },
+          { status: 400 }
+        );
+      }
+
+      const newProject = await createProject({ name, description, userId });
+      if (newProject) {
+        return redirect(`/projects/view/${newProject.name}`);
+      } else {
+        return json({ error: 'Unable to create project' }, { status: 500 });
+      }
+    }
+    default: {
       return json({ error: 'Invalid intent' }, { status: 400 });
+    }
   }
 };
 

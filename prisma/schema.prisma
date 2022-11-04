@@ -23,8 +23,10 @@ model Project {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  name        String   @unique
+  name        String
   description String?
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+
+  @@unique([name, userId])
 }

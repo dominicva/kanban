@@ -14,8 +14,8 @@ export default function PasswordInput({
   error,
 }: {
   error?: {
+    type: 'password' | 'form' | 'username' | 'unknown';
     message: string;
-    type: 'form' | 'password' | 'username' | 'unknown';
   };
 }) {
   const [showPassword, setShowPassword] = useState(false);

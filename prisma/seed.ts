@@ -33,7 +33,7 @@ async function main() {
 
   for (const { name, description } of seedProjects) {
     const project = await prisma.project.upsert({
-      where: { name },
+      where: { name_userId: { name, userId: seedUser.id } },
       create: { name, description, userId: seedUser.id },
       update: { name, description, userId: seedUser.id },
     });
