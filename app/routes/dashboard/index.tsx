@@ -27,17 +27,19 @@ export default function DashboardIndex() {
     <Box>
       {show ? (
         <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
-          <Text fontSize={'2xl'}>Welcome to your dashboard!</Text>
+          <Text textStyle="h2" color="_gray.500">
+            This board is empty. Create a new column to get started.
+          </Text>
 
           <Button
             as={Link}
-            to="/dashboard/new"
+            to="column/new"
             variant="primary"
             leftIcon={<AddIcon />}
             size="lg"
             px={10}
           >
-            Create a new project
+            Add new column
           </Button>
         </Flex>
       ) : null}

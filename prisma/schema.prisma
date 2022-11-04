@@ -27,6 +27,45 @@ model Project {
   description String?
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+  columns     Column[]
 
   @@unique([name, userId])
+}
+
+model Column {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  tasks     Task[]
+
+  @@unique([title, projectId])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String
+  description String?
+  subtasks    Subtask[]
+  column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  columnId    String
+  position    Int
+
+  @@unique([title, columnId])
+}
+
+model Subtask {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String
+  status      Boolean
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String
+
+  @@unique([description, taskId])
 }
