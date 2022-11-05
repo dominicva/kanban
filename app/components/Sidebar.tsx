@@ -85,13 +85,16 @@ export default function Sidebar({
             </ListItem>
           ))}
           <ListItem display="flex" alignItems="center">
-            <ListIcon as={TbLayoutBoardSplit} color="_purple.900" />
+            <ListIcon
+              as={TbLayoutBoardSplit}
+              color={useColorModeValue('_purple.900', '_purple.700')}
+            />
             <Button
               as={Link}
               to="new"
               variant="link"
               textStyle="h3"
-              textColor="_purple.900"
+              textColor={useColorModeValue('_purple.900', '_purple.700')}
               justifyContent="flex-start"
             >
               Create new project
