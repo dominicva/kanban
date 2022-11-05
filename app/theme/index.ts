@@ -1,31 +1,8 @@
-import type { StyleFunctionProps, ThemeConfig } from '@chakra-ui/react';
+import type { ThemeConfig } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
 import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system';
 
-const customSwitch = defineStyle(props => {
-  const { colorScheme: c } = props;
-  return {
-    track: {
-      bg: `${c}.900`,
-      alignItems: 'center',
-      height: '20px',
-      width: '40px',
-      _checked: {
-        bg: `${c}.900`,
-      },
-    },
-    thumb: {
-      transition: 'transform 0.2s',
-      transform: 'translateX(2px)',
-      _checked: {
-        transform: 'translateX(20px)',
-      },
-    },
-  };
-});
-
 const Button = defineStyleConfig({
-  // the styles all buttons have in common
   baseStyle: {
     fontWeight: 'bold',
     fontFamily: 'Plus Jakarta Sans',
@@ -38,7 +15,6 @@ const Button = defineStyleConfig({
       transform: 'scale(1,1)',
     },
   },
-  // two sides: lg and sm
   sizes: {
     lg: {
       fontSize: '15px',
@@ -49,7 +25,6 @@ const Button = defineStyleConfig({
       h: '40px',
     },
   },
-  // two variants: primary and secondary
   variants: {
     primary: {
       borderRadius: 'full',
@@ -103,13 +78,34 @@ const Button = defineStyleConfig({
       },
     },
   },
-  // the default size and variant values
   defaultProps: {
     variant: 'primary',
   },
 });
 
-export const switchTheme = defineStyleConfig({
+const customSwitch = defineStyle(props => {
+  const { colorScheme: c } = props;
+  return {
+    track: {
+      bg: `${c}.900`,
+      alignItems: 'center',
+      height: '20px',
+      width: '40px',
+      _checked: {
+        bg: `${c}.900`,
+      },
+    },
+    thumb: {
+      transition: 'transform 0.2s',
+      transform: 'translateX(2px)',
+      _checked: {
+        transform: 'translateX(20px)',
+      },
+    },
+  };
+});
+
+const switchTheme = defineStyleConfig({
   variants: {
     custom: customSwitch,
   },
@@ -163,17 +159,13 @@ const theme: ThemeConfig = extendTheme({
     Button,
     Input: {
       variants: {
-        outline: (props: StyleFunctionProps) => {
-          const { colorScheme: c } = props;
-          return {
-            field: {
-              _focusVisible: {
-                boxShadow: `none`,
-                borderColor: `none`,
-              },
-              errorBorderColor: `yelow`,
+        outline: {
+          field: {
+            _focusVisible: {
+              boxShadow: `none`,
+              borderColor: `none`,
             },
-          };
+          },
         },
       },
     },
