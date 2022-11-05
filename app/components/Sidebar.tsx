@@ -114,11 +114,7 @@ export default function Sidebar({
           bg={useColorModeValue('gray.100', 'gray.900')}
         >
           <Icon display="block" as={SunIcon} />
-          <Switch
-            colorScheme="_purple"
-            variant="custom"
-            onChange={toggleColorMode}
-          />
+          <Switch onChange={toggleColorMode} />
           <Icon display="block" as={MoonIcon} />
         </Flex>
         <Button
