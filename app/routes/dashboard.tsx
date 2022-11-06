@@ -20,17 +20,6 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json({ projects, user });
 };
 
-// export const action = async ({ request }: LoaderArgs) => {
-//   const formData = await request.formData();
-//   const intent = formData.get('intent');
-
-//   if (intent === 'logout') {
-//     return logout(request);
-//   } else {
-//     return redirect('/dashboard');
-//   }
-// };
-
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
 

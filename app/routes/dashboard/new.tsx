@@ -1,15 +1,7 @@
-import type { ActionFunction, LoaderArgs } from '@remix-run/node';
+import type { ActionFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useTransition,
-} from '@remix-run/react';
-import { getUserId } from '~/utils/session.server';
-import { createProject, getProject } from '~/models/project.server';
+import { Form, Link, useActionData, useTransition } from '@remix-run/react';
 import {
   Box,
   Text,
@@ -24,15 +16,12 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
+import { getUserId } from '~/utils/session.server';
+import { createProject, getProject } from '~/models/project.server';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const action: ActionFunction = async ({ request }) => {
   const userId = await getUserId(request);
-
-  return json({ project: null, crud: 'create', userId });
-};
-
-export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await getUserId(request);
+  if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
 
   const formData = await request.formData();
   const name = String(formData.get('name')).trim();
@@ -54,8 +43,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function NewProject() {
-  const loadedData = useLoaderData();
-
   const actionResults = useActionData();
   const transition = useTransition();
 
@@ -89,12 +76,7 @@ export default function NewProject() {
           <Box>
             <FormControl isInvalid={Boolean(actionResults?.error)}>
               <FormLabel htmlFor="name">Project Name</FormLabel>
-              <Input
-                type="text"
-                name="name"
-                defaultValue={loadedData.project?.name ?? ''}
-                key={loadedData.project?.id}
-              />
+              <Input type="text" name="name" />
               <FormErrorMessage>{actionResults?.error}</FormErrorMessage>
             </FormControl>
           </Box>
@@ -106,8 +88,6 @@ export default function NewProject() {
                 id="description"
                 rows={8}
                 name="description"
-                key={loadedData.project?.description}
-                defaultValue={loadedData.project?.description ?? ''}
                 w="100%"
                 bg="transparent"
                 border="1px solid rgba(255,255,255,0.2)"
@@ -122,7 +102,7 @@ export default function NewProject() {
             <Button
               type="submit"
               disabled={busy}
-              variant={loadedData.crud ? 'primary' : 'secondary'}
+              variant="primary"
               size="lg"
               width="100%"
             >

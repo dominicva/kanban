@@ -46,27 +46,16 @@ export const action = async ({ request, params }: ActionArgs) => {
     },
   });
 
-  console.log('newColumn', newColumn);
-
   if (!newColumn)
     throw json(
       { error: `Unable to create "${title}" column` },
       { status: 500 }
     );
 
-  return redirect(`dashboard/${params.project}/columns`);
+  return redirect(`dashboard/${params.project}`);
 };
 
 export default function NewColumn() {
-  // const [name, setName] = useState(' ');
-  // const isError = name.length === 0;
-  const actionData = useActionData();
-  console.log('actionData', actionData);
-  // const params = useParams();
-  // const data = useLoaderData();
-  // console.log('data in new column', data);
-  // console.log('params in new column', params);
-
   return (
     <Form method="post">
       <Flex>

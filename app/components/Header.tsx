@@ -64,11 +64,11 @@ export default function Header({
             </Button>
           </Box>
           <ButtonGroup alignItems="center">
-            <Form action={`/dashboard/${params.project}/update`}>
-              <Button type="submit" leftIcon={<MdAdd />} size="lg">
+            <Link to={`${params.project}/columns/new`}>
+              <Button leftIcon={<MdAdd />} size="lg" disabled={true}>
                 Add new task
               </Button>
-            </Form>
+            </Link>
             <Form>
               <IconButton
                 aria-label="Options"

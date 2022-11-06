@@ -20,26 +20,16 @@ export default function Column({
       h="100%"
     >
       <Flex justifyContent="space-between" alignItems="center">
-        <Box textStyle="h3">{title}</Box>
         <Text
           style={{ fontVariant: 'small-caps' }}
+          letterSpacing="2.4px"
           color="gray.400"
           mb={5}
-          ml="2px"
         >
           {title} ({tasks.length})
         </Text>
-        <Button
-          as={Link}
-          to={`/column/${title}/new`}
-          variant="primary"
-          size="sm"
-          px={4}
-        >
-          Add task
-        </Button>
       </Flex>
-      <Box h="1px" bg="_gray.100" my={4} />
+      <Box h="1px" bg="_gray.100" mt={2} mb={4} />
       <Box>
         {tasks.map(task => (
           <Box key={task.id} textStyle="h4" mb={4}>
