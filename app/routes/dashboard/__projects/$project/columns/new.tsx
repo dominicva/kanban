@@ -54,7 +54,7 @@ export const action = async ({ request, params }: ActionArgs) => {
       { status: 500 }
     );
 
-  return redirect(`/dashboard/${params.project}`);
+  return redirect(`dashboard/${params.project}/columns`);
 };
 
 export default function NewColumn() {

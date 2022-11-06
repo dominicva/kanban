@@ -1,5 +1,6 @@
 import type { Task } from '@prisma/client';
-import { Box, Flex, GridItem, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, GridItem, Text } from '@chakra-ui/react';
+import { Link } from '@remix-run/react';
 
 export default function Column({
   title,
@@ -28,7 +29,7 @@ export default function Column({
         >
           {title} ({tasks.length})
         </Text>
-        {/* <Button
+        <Button
           as={Link}
           to={`/column/${title}/new`}
           variant="primary"
@@ -36,7 +37,7 @@ export default function Column({
           px={4}
         >
           Add task
-        </Button> */}
+        </Button>
       </Flex>
       <Box h="1px" bg="_gray.100" my={4} />
       <Box>

@@ -8,33 +8,46 @@ import { getProject } from '~/models/project.server';
 import { db } from '~/utils/db.server';
 import { getUserId } from '~/utils/session.server';
 import { AddIcon } from '@chakra-ui/icons';
+import type { Column } from '@prisma/client';
+import KanbanColumn from '~/components/Column';
 
-// export const loader = async ({ request, params }: LoaderArgs) => {
-//   if (!params?.project)
-//     throw json({ error: 'Project required' }, { status: 404 });
-//   const userId = await getUserId(request);
-//   if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
+export const loader = async ({ request, params }: LoaderArgs) => {
+  if (!params?.project)
+    throw json({ error: 'Project required' }, { status: 404 });
+  const userId = await getUserId(request);
+  if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
+  const columns = await db.project.findUnique({
+    where: {
+      name_userId: { name: params.project, userId },
+    },
+    select: { columns: true },
+  });
+  if (!columns) throw json({ error: 'Not found' }, { status: 404 });
 
-//   const project = await getProject({ name: params.project, userId });
-//   if (!project) throw json({ error: 'Project not found' }, { status: 404 });
-//   const hasColumns = Object.hasOwn(project, 'columns');
-//   // const columns = await getAllColumns( project.id);
+  console.log('columns', columns);
 
-//   // if (!project || project.userId !== userId || !userId) {
-//   //   return json({ error: 'Not found' }, { status: 404 });
-//   // }
-//   // query prisma fpr the columns in this project
-//   // const columns = await getAllColumns(project.id);
-//   // const columns = await db.column.findFirst({
-//   //   where: {
-//   //     userId,
-//   //     name: params.project
-//   //   })
+  return json(columns);
 
-//   // return json({ columns: 'temp', project: 'temp' });
-//   // return json({ project, hasColumns });
-//   return json({ message: 'temp' });
-// };
+  // const project = await getProject({ name: params.project, userId });
+  // if (!project) throw json({ error: 'Project not found' }, { status: 404 });
+  // const hasColumns = Object.hasOwn(project, 'columns');
+  // const columns = await getAllColumns( project.id);
+
+  // if (!project || project.userId !== userId || !userId) {
+  //   return json({ error: 'Not found' }, { status: 404 });
+  // }
+  // query prisma fpr the columns in this project
+  // const columns = await getAllColumns(project.id);
+  // const columns = await db.column.findFirst({
+  //   where: {
+  //     userId,
+  //     name: params.project
+  //   })
+
+  // return json({ columns: 'temp', project: 'temp' });
+  // return json({ project, hasColumns });
+  // return json({ message: 'temp' });
+};
 
 function Column({ title, tasks }) {
   return (
@@ -75,8 +88,8 @@ function Column({ title, tasks }) {
 export default function ColumnsRoute() {
   // const params = useParams();
   // console.log('params', params);
-  // const data = useLoaderData();
-  // console.log('data', data);
+  const data = useLoaderData();
+  console.log('data', data);
 
   return (
     <Grid
@@ -84,6 +97,9 @@ export default function ColumnsRoute() {
       templateRows="repeat(5, 1fr)"
       gap={4}
     >
+      {data.columns.map((column: Column) => (
+        <KanbanColumn key={column.id} title={column.title} tasks={[]} />
+      ))}
       {/* Helloo!!! */}
       {/* {!data.hasColumns ? (
         <Box>

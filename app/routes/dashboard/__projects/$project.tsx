@@ -16,23 +16,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (!params?.project)
     throw json({ error: 'Project required' }, { status: 404 });
 
-  // const project = await getProject({ name: params.project, userId });
-  // const project = await getProject({ name: params.project, userId });
   const project = await db.project.findUnique({
     where: {
-      name_userId: {
-        name: params.project,
-        userId,
-      },
+      name_userId: { name: params.project, userId },
     },
-    include: {
-      columns: true,
-    },
+    include: { columns: true },
   });
 
   if (!project) throw json({ error: 'Project not found' }, { status: 404 });
-  // const hasColumns = Object.hasOwn(project, 'columns');
-  console.log('project', project);
 
   // TODO: check for overfetching
   return json({ project });
@@ -40,18 +31,13 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 export default function ProjectRoute() {
   const { project } = useLoaderData<typeof loader>();
-  console.log('data in routes/dashboard/__projects/$project.tsx', project);
-  // const columns = hasColumns ? project?.columns : [];
-  const hasColumns = project?.columns?.length > 0;
-  console.log('hasColumns', hasColumns);
+  console.log('project in $project', project);
+
+  const noColumns = project?.columns?.length === 0;
 
   return (
     <Box>
-      {hasColumns ? (
-        project.columns.map(({ id, title }: Pick<Column, 'id' | 'title'>) => {
-          return <KanbanColumn key={id} title={title} tasks={[]} />;
-        })
-      ) : (
+      {noColumns ? (
         <>
           <Flex flexDir="column" gap={6} align="center">
             <Box>This board is empty. Add a column to get started. </Box>
@@ -67,7 +53,7 @@ export default function ProjectRoute() {
             </Button>
           </Flex>
         </>
-      )}
+      ) : null}
       <Outlet />
     </Box>
   );
