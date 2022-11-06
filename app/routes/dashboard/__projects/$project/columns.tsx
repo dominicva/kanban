@@ -51,11 +51,14 @@ export default function ColumnsRoute() {
   // const columns = data.columns;
 
   return (
-    <Box>
-      {columns.map((column: Column) => (
-        <ProjectColumn key={column.id} title={column.title} tasks={[]} />
-      ))}
-    </Box>
+    <>
+      <Box>
+        {columns.map((column: Column) => (
+          <ProjectColumn key={column.id} title={column.title} tasks={[]} />
+        ))}
+      </Box>
+      <Outlet />
+    </>
   );
 }
 

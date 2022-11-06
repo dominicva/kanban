@@ -16,12 +16,30 @@ import { logout } from '~/utils/session.server';
 
 export default function Header({
   username,
-  headerProject,
 }: {
   username: User['username'] | any;
-  headerProject: string;
 }) {
   const params = useParams();
+
+  const projectHeader = (
+    <>
+      <Heading as="h2" size="md" fontWeight="semibold">
+        {params.project}
+      </Heading>
+      <Button
+        leftIcon={<MdExpandMore />}
+        variant="link"
+        fontSize="15px"
+        fontWeight="normal"
+        ml={-1}
+        _hover={{
+          color: useColorModeValue('_purple.900', '_purple.500'),
+        }}
+      >
+        Show project description
+      </Button>
+    </>
+  );
 
   return (
     <Box
@@ -33,19 +51,7 @@ export default function Header({
     >
       <Flex justifyContent="space-between" alignItems="center">
         <Flex flexDir="column" gap={4}>
-          <Heading as="h2" size="md" fontWeight="semibold">
-            {params.project || headerProject}
-          </Heading>
-          <Button
-            leftIcon={<MdExpandMore />}
-            variant="link"
-            fontSize="15px"
-            fontWeight="normal"
-            ml={-1}
-            _hover={{ color: useColorModeValue('_purple.900', '_purple.500') }}
-          >
-            Show project description
-          </Button>
+          {params.project ? projectHeader : null}
         </Flex>
         <Flex alignItems="center" gap={8}>
           <Box>

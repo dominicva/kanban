@@ -17,6 +17,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     throw json({ error: 'Project required' }, { status: 404 });
 
   // const project = await getProject({ name: params.project, userId });
+  // const project = await getProject({ name: params.project, userId });
   const project = await db.project.findUnique({
     where: {
       name_userId: {
@@ -31,7 +32,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   if (!project) throw json({ error: 'Project not found' }, { status: 404 });
   // const hasColumns = Object.hasOwn(project, 'columns');
-  // console.log('project', project);
+  console.log('project', project);
 
   // TODO: check for overfetching
   return json({ project });
@@ -42,6 +43,7 @@ export default function ProjectRoute() {
   console.log('data in routes/dashboard/__projects/$project.tsx', project);
   // const columns = hasColumns ? project?.columns : [];
   const hasColumns = project?.columns?.length > 0;
+  console.log('hasColumns', hasColumns);
 
   return (
     <Box>
@@ -64,9 +66,9 @@ export default function ProjectRoute() {
               Add column
             </Button>
           </Flex>
-          <Outlet />
         </>
       )}
+      <Outlet />
     </Box>
   );
   // return (

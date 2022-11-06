@@ -33,11 +33,10 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
-  const headerProject = projects.length > 0 ? projects[0].name : '';
 
   return (
     <Grid gridTemplateColumns="250px 1fr">
-      <Header username={user?.username} headerProject={headerProject} />
+      <Header username={user?.username} />
 
       <Sidebar projectNames={projects.map(project => project.name)} />
 

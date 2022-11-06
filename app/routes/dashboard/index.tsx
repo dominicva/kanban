@@ -22,10 +22,10 @@ export default function DashboardIndex() {
       {!params?.project ? (
         <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
           <Text textStyle="h2" color="_gray.500">
-            This board is empty. Create a new column to get started.
+            No board selected. Pick one from the sidebar.
           </Text>
 
-          <Button
+          {/* <Button
             as={Link}
             to="column/new"
             variant="primary"
@@ -34,7 +34,7 @@ export default function DashboardIndex() {
             px={10}
           >
             Add new column
-          </Button>
+          </Button> */}
         </Flex>
       ) : null}
 
