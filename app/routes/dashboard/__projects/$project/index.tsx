@@ -1,3 +1,4 @@
+import type { LoaderArgs } from '@remix-run/node';
 import { Grid, GridItem, Flex, Box, Button } from '@chakra-ui/react';
 import { json } from '@remix-run/node';
 import { Link, useParams } from '@remix-run/react';
@@ -6,20 +7,34 @@ import { getAllColumns } from '~/models/column.server';
 import { getProject } from '~/models/project.server';
 import { db } from '~/utils/db.server';
 import { getUserId } from '~/utils/session.server';
+import { AddIcon } from '@chakra-ui/icons';
 
-export const loader = async ({ request, params }) => {
-  const projectName = params.project;
-  const userId = await getUserId(request);
-  const project = await getProject({ name: projectName, userId });
+// export const loader = async ({ request, params }: LoaderArgs) => {
+//   if (!params?.project)
+//     throw json({ error: 'Project required' }, { status: 404 });
+//   const userId = await getUserId(request);
+//   if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
 
-  if (!project || project.userId !== userId || !userId) {
-    return json({ error: 'Not found' }, { status: 404 });
-  }
-  // query prisma fpr the columns in this project
-  const columns = await getAllColumns(project.id);
+//   const project = await getProject({ name: params.project, userId });
+//   if (!project) throw json({ error: 'Project not found' }, { status: 404 });
+//   const hasColumns = Object.hasOwn(project, 'columns');
+//   // const columns = await getAllColumns( project.id);
 
-  return json({ columns, project });
-};
+//   // if (!project || project.userId !== userId || !userId) {
+//   //   return json({ error: 'Not found' }, { status: 404 });
+//   // }
+//   // query prisma fpr the columns in this project
+//   // const columns = await getAllColumns(project.id);
+//   // const columns = await db.column.findFirst({
+//   //   where: {
+//   //     userId,
+//   //     name: params.project
+//   //   })
+
+//   // return json({ columns: 'temp', project: 'temp' });
+//   // return json({ project, hasColumns });
+//   return json({ message: 'temp' });
+// };
 
 function Column({ title, tasks }) {
   return (
@@ -69,6 +84,21 @@ export default function BoardRoute() {
       templateRows="repeat(5, 1fr)"
       gap={4}
     >
+      {/* Helloo!!! */}
+      {/* {!data.hasColumns ? (
+        <Box>
+          This board is empty. Add a column to get started.{' '}
+          <Button
+            as={Link}
+            to="/column/new"
+            variant="primary"
+            size="sm"
+            leftIcon={<AddIcon />}
+          >
+            Add column
+          </Button>
+        </Box>
+      ) : null} */}
       {/* <GridItem colSpan={1} rowSpan={1}>
         <Box bg="tomato" h="100%" w="100%">
           One
