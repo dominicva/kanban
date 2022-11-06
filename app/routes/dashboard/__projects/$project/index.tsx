@@ -60,8 +60,8 @@ function Column({ title, tasks }) {
 export default function BoardRoute() {
   // const params = useParams();
   // console.log('params', params);
-  const data = useLoaderData();
-  console.log('data', data);
+  // const data = useLoaderData();
+  // console.log('data', data);
 
   return (
     <Grid
@@ -69,7 +69,7 @@ export default function BoardRoute() {
       templateRows="repeat(5, 1fr)"
       gap={4}
     >
-      <GridItem colSpan={1} rowSpan={1}>
+      {/* <GridItem colSpan={1} rowSpan={1}>
         <Box bg="tomato" h="100%" w="100%">
           One
         </Box>
@@ -88,7 +88,7 @@ export default function BoardRoute() {
         <Box bg="tomato" h="100%" w="100%">
           Four
         </Box>
-      </GridItem>
+      </GridItem> */}
     </Grid>
   );
 }

@@ -1,31 +1,25 @@
-import { Link, Outlet } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/node';
+import { Link, Outlet, useParams } from '@remix-run/react';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import ErrorFallback from '~/components/ErrorFallback';
 import { getUserId } from '~/utils/session.server';
 import { AddIcon } from '@chakra-ui/icons';
 
-export const loader = async ({ request }) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const userId = await getUserId(request);
   return { userId };
 };
 
 export default function DashboardIndex() {
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    const main = document.querySelector('main');
-    const children = main?.children;
-    if (children && children.length > 1) {
-      setShow(false);
-    } else {
-      setShow(true);
-    }
-  }, []);
+  const params = useParams();
+  // const data = useLoaderData<typeof loader>();
+  // console.log('data in routes/dashboard/index.tsx', data);
+  // console.log('params in index', params);
 
   return (
     <Box>
-      {show ? (
+      {!params?.project ? (
         <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
           <Text textStyle="h2" color="_gray.500">
             This board is empty. Create a new column to get started.
