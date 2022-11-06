@@ -72,7 +72,7 @@ function Column({ title, tasks }) {
   );
 }
 
-export default function BoardRoute() {
+export default function ColumnsRoute() {
   // const params = useParams();
   // console.log('params', params);
   // const data = useLoaderData();

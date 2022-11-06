@@ -52,11 +52,9 @@ export default function ColumnsRoute() {
 
   return (
     <Box>
-      {columns?.length > 0
-        ? columns.map((column: Column) => (
-            <ProjectColumn key={column.id} title={column.title} tasks={[]} />
-          ))
-        : null}
+      {columns.map((column: Column) => (
+        <ProjectColumn key={column.id} title={column.title} tasks={[]} />
+      ))}
     </Box>
   );
 }
