@@ -32,7 +32,7 @@ export default function ProjectRoute() {
   const noColumns = project?.columns?.length === 0;
 
   return (
-    <Box>
+    <Box h="100%">
       {noColumns ? (
         <>
           <Flex flexDir="column" gap={6} align="center">

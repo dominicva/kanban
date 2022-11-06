@@ -13,6 +13,8 @@ export default function Column({
     <GridItem
       colSpan={1}
       borderRadius="md"
+      border="1px"
+      borderColor="_gray.800"
       boxShadow="md"
       p={4}
       minW="250px"

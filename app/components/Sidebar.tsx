@@ -29,6 +29,7 @@ export default function Sidebar({
   return (
     <Box
       as="aside"
+      bg={useColorModeValue('gray.50', '#2B2C37')}
       display="flex"
       flexDir="column"
       justifyContent="space-between"
@@ -38,7 +39,8 @@ export default function Sidebar({
       bottom={0}
       zIndex={1}
       width="250px"
-      borderRightWidth="1px"
+      borderRightWidth="0.75px"
+      borderColor={useColorModeValue('_gray.200', '_gray.700')}
       overflowY="auto"
       _focus={{ outline: 'none' }}
       tabIndex={-1}

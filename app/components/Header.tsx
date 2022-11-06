@@ -46,7 +46,9 @@ export default function Header({
       ml="250px"
       as="header"
       p="6"
-      borderBottomWidth="1px"
+      bg={useColorModeValue('gray.50', '#2B2C37')}
+      borderBottomWidth="0.75px"
+      borderColor={useColorModeValue('_gray.200', '_gray.700')}
       gridColumn="span 2"
     >
       <Flex justifyContent="space-between" alignItems="center">

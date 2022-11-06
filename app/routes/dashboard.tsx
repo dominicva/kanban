@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { redirect, json } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
-import { Box, Grid } from '@chakra-ui/react';
+import { Box, Grid, useColorModeValue } from '@chakra-ui/react';
 import { getAllProjects } from '~/models/project.server';
 import { getUser, logout } from '~/utils/session.server';
 import Sidebar from '~/components/Sidebar';
@@ -29,7 +29,13 @@ export default function ProjectsRoute() {
 
       <Sidebar projectNames={projects.map(project => project.name)} />
 
-      <Box as="main" gridColumnStart={2} h="calc(100vh - 98px)" p="2rem">
+      <Box
+        as="main"
+        bg={useColorModeValue('gray.100', '_gray.900')}
+        gridColumnStart={2}
+        h="calc(100vh - 98px)"
+        p="2rem"
+      >
         <Outlet />
       </Box>
     </Grid>
