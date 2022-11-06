@@ -1,8 +1,10 @@
+import type { Column } from '@prisma/client';
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Box, Button, Flex, GridItem } from '@chakra-ui/react';
+import { Box, Button, Flex, GridItem, Text } from '@chakra-ui/react';
 import {
   Link,
+  Outlet,
   useActionData,
   useLoaderData,
   useMatches,
@@ -27,28 +29,42 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       projectId: project.id,
     },
   });
-  console.log('columns', columns);
+  // console.log('columns', columns);
 
-  return json({ ...project, columns });
+  return json({
+    ...project,
+    columns: columns.map(({ id, title, createdAt, updatedAt }: Column) => ({
+      id,
+      title,
+      createdAt,
+      updatedAt,
+    })),
+  });
 };
 
 export default function ColumnsRoute() {
   const data = useLoaderData();
+  console.log('data', data);
 
-  const boardIsEmpty = data.columns.length === 0;
-  if (!boardIsEmpty) {
-    return <div>Nada</div>;
-  }
+  const columns = data.columns;
 
-  console.log('data in routes/dashboard/__projects/$project/columns.tsx', data);
-  return <Column title="first" tasks={['one']} />;
+  // const columns = data.columns;
+
+  return (
+    <Box>
+      {columns?.length > 0
+        ? columns.map((column: Column) => (
+            <ProjectColumn key={column.id} title={column.title} tasks={[]} />
+          ))
+        : null}
+    </Box>
+  );
 }
 
-function Column({ title, tasks }) {
+function ProjectColumn({ title, tasks }) {
   return (
     <GridItem
       colSpan={1}
-      bg="white"
       borderRadius="md"
       boxShadow="md"
       p={4}
@@ -58,7 +74,15 @@ function Column({ title, tasks }) {
     >
       <Flex justifyContent="space-between" alignItems="center">
         <Box textStyle="h3">{title}</Box>
-        <Button
+        <Text
+          style={{ fontVariant: 'small-caps' }}
+          color="gray.400"
+          mb={5}
+          ml="2px"
+        >
+          {title} ({tasks.length})
+        </Text>
+        {/* <Button
           as={Link}
           to={`/column/${title}/new`}
           variant="primary"
@@ -66,7 +90,7 @@ function Column({ title, tasks }) {
           px={4}
         >
           Add task
-        </Button>
+        </Button> */}
       </Flex>
       <Box h="1px" bg="_gray.100" my={4} />
       <Box>
