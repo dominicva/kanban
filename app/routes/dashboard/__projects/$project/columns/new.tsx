@@ -1,23 +1,8 @@
-import type { Column } from '@prisma/client';
-import { Prisma } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Input,
-} from '@chakra-ui/react';
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useParams,
-} from '@remix-run/react';
+import { Button, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Form } from '@remix-run/react';
 import { db } from '~/utils/db.server';
 import { getProject } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
@@ -52,7 +37,7 @@ export const action = async ({ request, params }: ActionArgs) => {
       { status: 500 }
     );
 
-  return redirect(`dashboard/${params.project}`);
+  return redirect(`dashboard/${params.project}/columns/${newColumn.title}`);
 };
 
 export default function NewColumn() {

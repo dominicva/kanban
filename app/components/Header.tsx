@@ -66,11 +66,17 @@ export default function Header({
             </Button>
           </Box>
           <ButtonGroup alignItems="center">
-            <Link to={`${params.project}/columns/new`}>
-              <Button leftIcon={<MdAdd />} size="lg" disabled={true}>
-                Add new task
-              </Button>
-            </Link>
+            {/* <Form method="post" action={`${params.project}/columns/tasks/new`}> */}
+            <Button
+              as={Link}
+              to={`${params.project}/columns/tasks/new`}
+              type="submit"
+              leftIcon={<MdAdd />}
+              size="lg"
+            >
+              Add new task
+            </Button>
+            {/* </Form> */}
             <Form>
               <IconButton
                 aria-label="Options"

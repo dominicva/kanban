@@ -1,14 +1,7 @@
-import type { Task } from '@prisma/client';
-import { Box, Button, Flex, GridItem, Text } from '@chakra-ui/react';
-import { Link } from '@remix-run/react';
+import { Box, Flex, GridItem, Text } from '@chakra-ui/react';
+import type { ColumnPayload } from '~/routes/dashboard/__projects/$project/index';
 
-export default function Column({
-  title,
-  tasks,
-}: {
-  title: string;
-  tasks: Array<Task>;
-}) {
+export default function Column({ column }: { column: ColumnPayload }) {
   return (
     <GridItem borderRadius="md" boxShadow="md" p={4} w="280px" h="100%">
       <Flex justifyContent="space-between" alignItems="center">
@@ -18,13 +11,13 @@ export default function Column({
           color="gray.400"
           mb={6}
         >
-          {title} ({tasks.length})
+          {column.title} ({column.tasks.length})
         </Text>
       </Flex>
       <Box>
-        {tasks.map(task => (
-          <Box key={task.id} textStyle="h4" mb={4}>
-            {task.title}
+        {column.tasks.map(({ title }) => (
+          <Box key={title} textStyle="h4" mb={4}>
+            {title}
           </Box>
         ))}
       </Box>

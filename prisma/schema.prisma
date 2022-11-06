@@ -53,7 +53,7 @@ model Task {
   subtasks    Subtask[]
   column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
   columnId    String
-  position    Int
+  status      String?
 
   @@unique([title, columnId])
 }
