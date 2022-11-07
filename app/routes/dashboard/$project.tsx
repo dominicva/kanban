@@ -1,6 +1,6 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { Box, Button, Flex } from '@chakra-ui/react';
 import ErrorFallback from '~/components/ErrorFallback';
 import { getUserId } from '~/utils/session.server';
@@ -28,15 +28,15 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 export default function ProjectRoute() {
   const { project } = useLoaderData<typeof loader>();
-
+  console.log('project', project);
   const noColumns = project?.columns?.length === 0;
 
   return (
     <Box h="100%">
       {noColumns ? (
-        <>
-          <Flex flexDir="column" gap={6} align="center">
-            <Box>This board is empty. Add a column to get started. </Box>
+        <Flex flexDir="column" gap={6} align="center">
+          <Box>This board is empty. Add a column to get started. </Box>
+          <Form method="post" action="columns/new">
             <Button
               as={Link}
               to="columns/new"
@@ -45,10 +45,10 @@ export default function ProjectRoute() {
               leftIcon={<MdAdd />}
               px={6}
             >
-              Add column
+              Add column!
             </Button>
-          </Flex>
-        </>
+          </Form>
+        </Flex>
       ) : null}
       <Outlet />
     </Box>

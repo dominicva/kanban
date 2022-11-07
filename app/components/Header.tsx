@@ -70,7 +70,7 @@ export default function Header({
             <Button
               as={Link}
               to={`${params.project}/columns/tasks/new`}
-              type="submit"
+              // type="submit"
               leftIcon={<MdAdd />}
               size="lg"
             >

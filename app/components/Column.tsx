@@ -1,5 +1,5 @@
 import { Box, Flex, GridItem, Text } from '@chakra-ui/react';
-import type { ColumnPayload } from '~/routes/dashboard/__projects/$project/index';
+import type { ColumnPayload } from '~/routes/dashboard/$project/index';
 
 export default function Column({ column }: { column: ColumnPayload }) {
   return (

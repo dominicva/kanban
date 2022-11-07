@@ -82,9 +82,7 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider theme={theme}>
-        <Box h="100vh" w="100vw" overflow="hidden">
-          <Outlet />
-        </Box>
+        <Outlet />
       </ChakraProvider>
     </Document>
   );

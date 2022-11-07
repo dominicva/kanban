@@ -3,7 +3,7 @@ import { redirect, json } from '@remix-run/node';
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { Box, Grid, useColorModeValue } from '@chakra-ui/react';
 import { getAllProjects } from '~/models/project.server';
-import { getUser, logout } from '~/utils/session.server';
+import { getUser } from '~/utils/session.server';
 import Sidebar from '~/components/Sidebar';
 import Header from '~/components/Header';
 import ErrorFallback from '~/components/ErrorFallback';
@@ -15,19 +15,19 @@ export const loader = async ({ request }: LoaderArgs) => {
     return redirect('/login');
   }
 
-  // TODO only send names
   const projects = await getAllProjects(user.id);
-  return json({ projects, user });
+  return json({ projects: projects.map(p => p.name), user });
 };
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
+  console.log('projects in dashboard.tsx', projects);
 
   return (
     <Grid gridTemplateColumns="250px 1fr">
       <Header username={user?.username} />
 
-      <Sidebar projectNames={projects.map(project => project.name)} />
+      <Sidebar projectNames={projects} />
 
       <Box
         as="main"

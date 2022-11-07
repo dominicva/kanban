@@ -1,29 +1,21 @@
-import type { LoaderArgs } from '@remix-run/node';
-import { Outlet, useParams } from '@remix-run/react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { useParams } from '@remix-run/react';
+import { Flex, Text } from '@chakra-ui/react';
 import ErrorFallback from '~/components/ErrorFallback';
-import { getUserId } from '~/utils/session.server';
-
-export const loader = async ({ request }: LoaderArgs) => {
-  const userId = await getUserId(request);
-  return { userId };
-};
 
 export default function DashboardIndex() {
   const params = useParams();
+  const noProjectSelected = !params?.project;
 
   return (
-    <Box>
-      {!params?.project ? (
+    <>
+      {noProjectSelected ? (
         <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
           <Text textStyle="h2" color="_gray.500">
-            No board selected. Pick one from the sidebar.
+            No project selected. Pick one from the sidebar.
           </Text>
         </Flex>
       ) : null}
-
-      <Outlet />
-    </Box>
+    </>
   );
 }
 

@@ -1,8 +1,9 @@
-import type { LoaderArgs } from '@remix-run/node';
+import { Box, Flex } from '@chakra-ui/react';
 import type { Prisma } from '@prisma/client';
+import type { LoaderArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { Flex } from '@chakra-ui/react';
+import { Outlet, useLoaderData } from '@remix-run/react';
 import { db } from '~/utils/db.server';
 import { getUserId } from '~/utils/session.server';
 import KanbanColumn from '~/components/Column';
@@ -25,6 +26,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   if (!columns) throw json({ error: 'Not found' }, { status: 404 });
 
+  if (columns.columns.length === 0) {
+    return redirect(params.project + '/columns/new');
+  }
+
   return json(columns);
 };
 
@@ -45,11 +50,22 @@ export default function ColumnsRoute() {
   const haveColumns = data.columns.length > 0;
 
   return (
-    <Flex h="100%" gap={6}>
-      {data.columns.map((column: ColumnPayload) => (
-        <KanbanColumn key={column.title} column={column} />
-      ))}
-      {haveColumns ? <AddColumn /> : null}
-    </Flex>
+    <>
+      <Flex h="100%" gap={6}>
+        {data.columns.map((column: ColumnPayload) => (
+          <KanbanColumn key={column.title} column={column} />
+        ))}
+        {haveColumns ? <AddColumn /> : null}
+      </Flex>
+      <Outlet />
+    </>
   );
 }
+
+// export default function ColumnsRoute() {
+//   return (
+//     <Box>
+//       <Outlet />
+//     </Box>
+//   );
+// }

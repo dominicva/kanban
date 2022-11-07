@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import type { Column } from '@prisma/client';
@@ -12,10 +12,33 @@ import {
   Text,
 } from '@chakra-ui/react';
 import type { RouteMatch } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 import { Form, useMatches } from '@remix-run/react';
 import { MdExpandMore } from 'react-icons/md';
 import { getUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
+
+export const loader = async ({ params }: LoaderArgs) => {
+  if (!params.project)
+    throw json({ error: 'No project provided' }, { status: 400 });
+
+  // const userId = await getUserId(params.request);
+  // if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
+
+  // const project = await db.project.findFirst({
+  //   where: {
+  //     name: params.project,
+  //     userId,
+  //   },
+  //   include: {
+  //     columns: true,
+  //   },
+  // });
+
+  // if (!project) throw json({ error: 'Project not found' }, { status: 404 });
+
+  return json({});
+};
 
 export const action = async ({ request, params }: ActionArgs) => {
   if (!params.project || typeof params.project !== 'string')
@@ -30,10 +53,17 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   if (!projectId) throw json({ error: 'Project not found' }, { status: 404 });
 
+  const formData = await request.formData();
+  const title = String(formData.get('title')).trim();
+  const description = String(formData.get('description')).trim();
+  const status = String(formData.get('status'));
+
+  if (!title) throw json({ error: 'Title is required' }, { status: 400 });
+
   const id = await db.column.findFirst({
     where: {
       projectId: projectId.id,
-      title: params.column,
+      title: status,
     },
     select: {
       id: true,
@@ -41,15 +71,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   });
 
   const columnId = id?.id;
-
   if (!columnId) throw json({ error: 'Project not found' }, { status: 404 });
-
-  const formData = await request.formData();
-  const title = String(formData.get('title')).trim();
-  const description = String(formData.get('description')).trim();
-  const status = String(formData.get('status'));
-
-  if (!title) throw json({ error: 'Title is required' }, { status: 400 });
 
   const newTask = await db.task.create({
     data: {
@@ -64,12 +86,17 @@ export const action = async ({ request, params }: ActionArgs) => {
     },
   });
 
-  if (!newTask) throw json({ error: 'Failed to create task' }, { status: 500 });
+  console.log('newTask', newTask);
 
-  return redirect(`/dashboard/${params.project}`);
+  if (!newTask) throw json({ error: 'Failed to create task' }, { status: 500 });
+  console.log('params', params);
+
+  // return redirect(`/dashboard/${params.project}`);
+  return json({ task: newTask });
 };
 
 export default function NewTaskRoute() {
+  const params = useParams();
   const matches = useMatches() ?? [{ params: {} }];
   const columns = matches
     ? matches
@@ -78,7 +105,7 @@ export default function NewTaskRoute() {
     : [];
 
   return (
-    <Form method="post">
+    <Form method="post" action={`/dashboard/${params.project}/columns`}>
       <Text textStyle={'h1'}>Add New Task</Text>
       <FormControl>
         <FormLabel htmlFor="title">Title</FormLabel>
