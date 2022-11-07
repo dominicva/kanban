@@ -28,7 +28,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 export default function ProjectRoute() {
   const { project } = useLoaderData<typeof loader>();
-  console.log('project', project);
+  // console.log('project', project);
   const noColumns = project?.columns?.length === 0;
 
   return (

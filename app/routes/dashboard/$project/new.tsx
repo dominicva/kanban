@@ -1,4 +1,5 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import {
@@ -46,7 +47,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   switch (resource) {
     case 'column': {
-      const column = await db.column.create({
+      await db.column.create({
         data: {
           title,
           project: {
@@ -57,7 +58,7 @@ export const action = async ({ request, params }: ActionArgs) => {
         },
       });
 
-      return json({ column });
+      return redirect(`/dashboard/${params.project}`);
     }
   }
 };
