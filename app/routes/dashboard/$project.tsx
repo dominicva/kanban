@@ -36,10 +36,12 @@ export default function ProjectRoute() {
       {noColumns ? (
         <Flex flexDir="column" gap={6} align="center">
           <Box>This board is empty. Add a column to get started. </Box>
-          <Form method="post" action="columns/new">
+
+          <Form>
             <Button
               as={Link}
-              to="columns/new"
+              to="new?resource=column"
+              type="submit"
               variant="primary"
               size="sm"
               leftIcon={<MdAdd />}

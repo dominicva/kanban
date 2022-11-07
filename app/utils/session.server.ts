@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import { db } from './db.server';
 import { createUser } from '~/models/user.server';
+import type { Project } from '@prisma/client';
 
 type LoginForm = {
   username: string;
@@ -86,6 +87,30 @@ export const getUser = async (request: Request) => {
   } catch {
     throw logout(request);
   }
+};
+
+export const getProjectId = async ({
+  request,
+  name,
+}: {
+  request: Request;
+  name: Project['name'];
+}) => {
+  const session = await getUserSession(request);
+  const userId = session.get('userId');
+  if (!userId || typeof userId !== 'string') return null;
+
+  const project = await db.project.findUnique({
+    where: {
+      name_userId: {
+        name,
+        userId,
+      },
+    },
+    select: { id: true },
+  });
+
+  return project?.id;
 };
 
 export const logout = async (request: Request) => {

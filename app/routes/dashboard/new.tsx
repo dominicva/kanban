@@ -1,7 +1,13 @@
 import type { ActionFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, Link, useActionData, useTransition } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useActionData,
+  useSubmit,
+  useTransition,
+} from '@remix-run/react';
 import {
   Box,
   Text,
@@ -43,6 +49,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function NewProject() {
+  const submit = useSubmit();
+  // submit();
+  console.dir(submit);
   const actionResults = useActionData();
   const transition = useTransition();
 
