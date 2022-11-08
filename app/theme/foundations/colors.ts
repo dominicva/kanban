@@ -10,6 +10,7 @@ export default {
     700: '#4f515a',
     800: '#383943',
     900: '#20212c',
+    darkTask: '#2B2C37',
   },
   _red: {
     50: '#fbdede',

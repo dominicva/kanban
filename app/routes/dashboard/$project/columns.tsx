@@ -23,7 +23,11 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       ],
     },
     include: {
-      columns: true,
+      columns: {
+        include: {
+          tasks: true,
+        },
+      },
     },
   });
 

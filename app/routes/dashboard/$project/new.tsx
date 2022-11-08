@@ -12,6 +12,7 @@ import {
   Input,
   FormErrorMessage,
   GridItem,
+  Select,
 } from '@chakra-ui/react';
 import { db } from '~/utils/db.server';
 import { getProject } from '~/models/project.server';
@@ -26,7 +27,33 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     throw json({ error: 'Resource required' }, { status: 400 });
   }
 
-  return json({ resource });
+  if (!params.project || typeof params.project !== 'string') {
+    throw json({ message: 'Project not found' }, { status: 404 });
+  }
+
+  let columns = [];
+
+  if (resource === 'task') {
+    const projectId = await getProjectId({ request, name: params.project });
+    if (!projectId) throw json({ error: 'Unauthorized' }, { status: 401 });
+
+    columns = await db.project.findFirst({
+      where: {
+        id: projectId,
+      },
+      select: {
+        columns: {
+          include: {
+            tasks: true,
+          },
+        },
+      },
+    });
+
+    // return json({ resource, columns });
+  }
+
+  return json({ resource, columns });
 };
 
 export const action = async ({ request, params }: ActionArgs) => {
@@ -62,19 +89,41 @@ export const action = async ({ request, params }: ActionArgs) => {
 
       return redirect(`/dashboard/${params.project}`);
     }
+
+    case 'task': {
+      const column = String(formData.get('column'));
+
+      await db.task.create({
+        data: {
+          title,
+          column: {
+            connect: {
+              title_projectId: {
+                title: column,
+                projectId,
+              },
+            },
+          },
+        },
+      });
+      return redirect(`/dashboard/${params.project}`);
+    }
   }
 };
 
 export default function ProjectColumnNew() {
-  const { resource } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const resource = data.resource;
+  const columns = data.columns;
   const actionData = useActionData<typeof action>();
-  console.log('actionDataa', actionData);
+  console.log('resource', resource);
+  console.log('actionData', actionData);
   const error = actionData?.error;
 
   return (
     <Box maxW="400px" mx="auto" mt={16}>
       <Text textStyle="h2" mb={6}>
-        Add column
+        Add {resource}
       </Text>
       <Form method="post">
         <Flex flexDir="column" gap={6}>
@@ -84,6 +133,15 @@ export default function ProjectColumnNew() {
             <FormErrorMessage>{error}</FormErrorMessage>
             <input type="hidden" name="resource" value={resource} />
           </FormControl>
+          {resource === 'task' ? (
+            <Select name="column">
+              {columns?.columns.map(column => (
+                <option key={column.id} value={column.title}>
+                  {column.title}
+                </option>
+              ))}
+            </Select>
+          ) : null}
           <Button type="submit">Create</Button>
         </Flex>
       </Form>

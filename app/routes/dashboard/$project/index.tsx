@@ -10,6 +10,7 @@ import {
   GridItem,
   Input,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import {
   Link,
@@ -25,6 +26,7 @@ import { db } from '~/utils/db.server';
 import Column from '~/components/Column';
 import { MdAdd } from 'react-icons/md';
 import { useEffect, useState } from 'react';
+import { TbColumns } from 'react-icons/tb';
 // import Col from '~/components/Column';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
@@ -48,7 +50,11 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       ],
     },
     include: {
-      columns: true,
+      columns: {
+        include: {
+          tasks: true,
+        },
+      },
     },
   });
 
@@ -60,8 +66,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 };
 
 function Col({ column }: { column?: any }) {
+  const data = useLoaderData();
+  console.log('data fro Col', data);
+  console.log('column', column);
+
+  const haveTasks = column?.tasks.length > 0;
+
   return (
-    <GridItem
+    <Box
       key={column.id}
       borderRadius="md"
       boxShadow="md"
@@ -76,16 +88,41 @@ function Col({ column }: { column?: any }) {
           color="gray.400"
           mb={6}
         >
-          {column.title} (0)
+          {column.title} ({data.columns.length})
         </Text>
       </Flex>
-    </GridItem>
+      <Flex flexDir="column" gap={5}>
+        {haveTasks
+          ? data.columns
+              .filter((col: any) => col.id === column.id)
+              .map((col: any) => {
+                return col.tasks.map((task: any) => <TaskCard task={task} />);
+              })
+          : null}
+      </Flex>
+    </Box>
+  );
+}
+
+function TaskCard({ task }: { task?: any }) {
+  return (
+    <Box
+      w="100%"
+      minH="88px"
+      borderRadius="md"
+      boxShadow="md"
+      bg={useColorModeValue('_gray.200', '_gray.darkTask')}
+      px={4}
+      py={6}
+    >
+      <Text textStyle="h3">{task.title}</Text>
+    </Box>
   );
 }
 
 export default function ProjectIndex() {
   const project = useLoaderData<typeof loader>();
-  console.log('project columns', project.columns);
+  console.log('project', project);
   const haveColumns = project.columns && project.columns.length > 0;
 
   return (
