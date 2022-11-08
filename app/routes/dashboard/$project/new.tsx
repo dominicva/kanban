@@ -15,6 +15,7 @@ import {
 import { db } from '~/utils/db.server';
 import { getProject } from '~/models/project.server';
 import { getProjectId } from '~/utils/session.server';
+import Col from '~/components/Column';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const url = new URL(request.url);
@@ -67,15 +68,17 @@ export default function ProjectColumnNew() {
   const { resource } = useLoaderData<typeof loader>();
 
   return (
-    <Form method="post">
-      <Text>Add column</Text>
-      <FormControl isInvalid={true}>
-        <FormLabel>Title</FormLabel>
-        <Input name="title" placeholder="e.g. To do" />
-        <FormErrorMessage>Oops</FormErrorMessage>
-      </FormControl>
-      <input type="hidden" name="resource" value={resource} />
-      <Button type="submit">Create</Button>
-    </Form>
+    <Col>
+      <Form method="post">
+        <Text>Add column</Text>
+        <FormControl isInvalid={true}>
+          <FormLabel>Title</FormLabel>
+          <Input name="title" placeholder="e.g. To do" />
+          <FormErrorMessage>Oops</FormErrorMessage>
+        </FormControl>
+        <input type="hidden" name="resource" value={resource} />
+        <Button type="submit">Create</Button>
+      </Form>
+    </Col>
   );
 }

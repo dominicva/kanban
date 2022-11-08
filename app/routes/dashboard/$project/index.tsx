@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { Link, useLoaderData, useParams } from '@remix-run/react';
+import { Link, useLoaderData, useParams, useFetcher } from '@remix-run/react';
 import { getProject } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
@@ -40,6 +40,30 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json(project);
 };
 
+function Col({ column }: { column: any }) {
+  return (
+    <GridItem
+      key={column.id}
+      borderRadius="md"
+      boxShadow="md"
+      p={4}
+      w="280px"
+      h="100%"
+    >
+      <Flex justifyContent="space-between" alignItems="center">
+        <Text
+          style={{ fontVariant: 'small-caps' }}
+          letterSpacing="2.4px"
+          color="gray.400"
+          mb={6}
+        >
+          {column.title} (0)
+        </Text>
+      </Flex>
+    </GridItem>
+  );
+}
+
 export default function ProjectIndex() {
   const project = useLoaderData<typeof loader>();
   console.log('project columns', project.columns);
@@ -49,25 +73,26 @@ export default function ProjectIndex() {
       {haveColumns
         ? project.columns.map(column => {
             return (
-              <GridItem
-                key={column.id}
-                borderRadius="md"
-                boxShadow="md"
-                p={4}
-                w="280px"
-                h="100%"
-              >
-                <Flex justifyContent="space-between" alignItems="center">
-                  <Text
-                    style={{ fontVariant: 'small-caps' }}
-                    letterSpacing="2.4px"
-                    color="gray.400"
-                    mb={6}
-                  >
-                    {column.title} (0)
-                  </Text>
-                </Flex>
-              </GridItem>
+              <Col key={column.id} column={column} />
+              // <GridItem
+              //   key={column.id}
+              //   borderRadius="md"
+              //   boxShadow="md"
+              //   p={4}
+              //   w="280px"
+              //   h="100%"
+              // >
+              //   <Flex justifyContent="space-between" alignItems="center">
+              //     <Text
+              //       style={{ fontVariant: 'small-caps' }}
+              //       letterSpacing="2.4px"
+              //       color="gray.400"
+              //       mb={6}
+              //     >
+              //       {column.title} (0)
+              //     </Text>
+              //   </Flex>
+              // </GridItem>
             );
           })
         : null}
