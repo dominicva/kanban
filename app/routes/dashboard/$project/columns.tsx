@@ -1,6 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
 import { db } from '~/utils/db.server';
 import { getUserId } from '~/utils/session.server';
 
@@ -13,21 +12,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const project = await db.project.findFirst({
     where: {
-      AND: [
-        {
-          name: params.project,
-        },
-        {
-          userId,
-        },
-      ],
+      AND: [{ name: params.project }, { userId }],
     },
     include: {
-      columns: {
-        include: {
-          tasks: true,
-        },
-      },
+      columns: { include: { tasks: true } },
     },
   });
 

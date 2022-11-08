@@ -1,33 +1,10 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Grid,
-  GridItem,
-  Input,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import {
-  Link,
-  useLoaderData,
-  useParams,
-  useFetcher,
-  Form,
-  Outlet,
-} from '@remix-run/react';
-import { getProject } from '~/models/project.server';
+import { Box, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { getUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
-import Column from '~/components/Column';
 import { MdAdd } from 'react-icons/md';
-import { useEffect, useState } from 'react';
-import { TbColumns } from 'react-icons/tb';
-// import Col from '~/components/Column';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   if (!params.project || typeof params.project !== 'string') {
@@ -36,25 +13,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const userId = await getUserId(request);
   if (!userId) throw json({ error: 'Unauthorized' }, { status: 401 });
 
-  // const project = await getProject({ userId, name: params.project });
-
   const project = await db.project.findFirst({
     where: {
-      AND: [
-        {
-          name: params.project,
-        },
-        {
-          userId,
-        },
-      ],
+      AND: [{ name: params.project }, { userId }],
     },
     include: {
-      columns: {
-        include: {
-          tasks: true,
-        },
-      },
+      columns: { include: { tasks: true } },
     },
   });
 
@@ -67,8 +31,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 function Col({ column }: { column?: any }) {
   const data = useLoaderData();
-  // console.log('data fro Col', data);
-  console.log('column in Col', column);
 
   const haveTasks = column?.tasks.length > 0;
 
@@ -122,7 +84,6 @@ function TaskCard({ task }: { task?: any }) {
 
 export default function ProjectIndex() {
   const project = useLoaderData<typeof loader>();
-  console.log('project', project);
   const haveColumns = project.columns && project.columns.length > 0;
 
   return (

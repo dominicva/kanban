@@ -11,13 +11,10 @@ import {
   Text,
   Input,
   FormErrorMessage,
-  GridItem,
   Select,
 } from '@chakra-ui/react';
 import { db } from '~/utils/db.server';
-import { getProject } from '~/models/project.server';
 import { getProjectId } from '~/utils/session.server';
-import Col from '~/components/Column';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const url = new URL(request.url);
@@ -37,6 +34,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     const projectId = await getProjectId({ request, name: params.project });
     if (!projectId) throw json({ error: 'Unauthorized' }, { status: 401 });
 
+    // @ts-ignore TODO!
     columns = await db.project.findFirst({
       where: {
         id: projectId,
@@ -49,8 +47,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         },
       },
     });
-
-    // return json({ resource, columns });
   }
 
   return json({ resource, columns });
@@ -71,7 +67,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   const title = String(formData.get('title'));
 
   if (!resource || !title) {
-    return json({ error: 'Column needs a title' }, { status: 400 });
+    return json({ error: 'Title required' }, { status: 400 });
   }
 
   switch (resource) {
@@ -97,15 +93,11 @@ export const action = async ({ request, params }: ActionArgs) => {
         data: {
           title,
           column: {
-            connect: {
-              title_projectId: {
-                title: column,
-                projectId,
-              },
-            },
+            connect: { title_projectId: { title: column, projectId } },
           },
         },
       });
+
       return redirect(`/dashboard/${params.project}`);
     }
   }
@@ -116,8 +108,6 @@ export default function ProjectColumnNew() {
   const resource = data.resource;
   const columns = data.columns;
   const actionData = useActionData<typeof action>();
-  console.log('resource', resource);
-  console.log('actionData', actionData);
   const error = actionData?.error;
 
   return (
@@ -133,14 +123,18 @@ export default function ProjectColumnNew() {
             <FormErrorMessage>{error}</FormErrorMessage>
             <input type="hidden" name="resource" value={resource} />
           </FormControl>
+
           {resource === 'task' ? (
-            <Select name="column">
-              {columns?.columns.map(column => (
-                <option key={column.id} value={column.title}>
-                  {column.title}
-                </option>
-              ))}
-            </Select>
+            <FormControl>
+              <FormLabel>Status</FormLabel>
+              <Select name="column">
+                {columns?.columns.map(column => (
+                  <option key={column.id} value={column.title}>
+                    {column.title}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
           ) : null}
           <Button type="submit">Create</Button>
         </Flex>

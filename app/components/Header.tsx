@@ -12,7 +12,6 @@ import {
 import { Form, Link, useParams } from '@remix-run/react';
 import { MdExpandMore, MdAdd } from 'react-icons/md';
 import { SlOptionsVertical } from 'react-icons/sl';
-import { logout } from '~/utils/session.server';
 
 export default function Header({
   username,
@@ -66,19 +65,18 @@ export default function Header({
             </Button>
           </Box>
           <ButtonGroup alignItems="center">
-            {/* <Form method="post" action={`${params.project}/columns/tasks/new`}> */}
             <Button
               as={Link}
               to={`${params.project}/new?resource=task`}
-              // type="submit"
               leftIcon={<MdAdd />}
               size="lg"
             >
               Add new task
             </Button>
-            {/* </Form> */}
             <Form>
               <IconButton
+                as={Link}
+                to={`${params.project}/settings`}
                 aria-label="Options"
                 icon={<SlOptionsVertical size={20} />}
                 variant="unstyled"
