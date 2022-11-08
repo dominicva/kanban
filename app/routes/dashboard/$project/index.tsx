@@ -67,8 +67,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
 function Col({ column }: { column?: any }) {
   const data = useLoaderData();
-  console.log('data fro Col', data);
-  console.log('column', column);
+  // console.log('data fro Col', data);
+  console.log('column in Col', column);
 
   const haveTasks = column?.tasks.length > 0;
 
@@ -88,7 +88,7 @@ function Col({ column }: { column?: any }) {
           color="gray.400"
           mb={6}
         >
-          {column.title} ({data.columns.length})
+          {column.title} ({column.tasks.length})
         </Text>
       </Flex>
       <Flex flexDir="column" gap={5}>
