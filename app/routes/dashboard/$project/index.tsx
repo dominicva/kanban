@@ -1,12 +1,31 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Box, Button, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { Link, useLoaderData, useParams, useFetcher } from '@remix-run/react';
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Grid,
+  GridItem,
+  Input,
+  Text,
+} from '@chakra-ui/react';
+import {
+  Link,
+  useLoaderData,
+  useParams,
+  useFetcher,
+  Form,
+  Outlet,
+} from '@remix-run/react';
 import { getProject } from '~/models/project.server';
 import { getUserId } from '~/utils/session.server';
 import { db } from '~/utils/db.server';
 import Column from '~/components/Column';
 import { MdAdd } from 'react-icons/md';
+import { useEffect, useState } from 'react';
+// import Col from '~/components/Column';
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   if (!params.project || typeof params.project !== 'string') {
@@ -40,7 +59,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return json(project);
 };
 
-function Col({ column }: { column: any }) {
+function Col({ column }: { column?: any }) {
   return (
     <GridItem
       key={column.id}
@@ -68,39 +87,20 @@ export default function ProjectIndex() {
   const project = useLoaderData<typeof loader>();
   console.log('project columns', project.columns);
   const haveColumns = project.columns && project.columns.length > 0;
+
   return (
-    <Grid templateColumns="repeat(auto-fit, 280px)" gap={6} h="100%">
+    <Flex gap={6} h="100%">
       {haveColumns
         ? project.columns.map(column => {
-            return (
-              <Col key={column.id} column={column} />
-              // <GridItem
-              //   key={column.id}
-              //   borderRadius="md"
-              //   boxShadow="md"
-              //   p={4}
-              //   w="280px"
-              //   h="100%"
-              // >
-              //   <Flex justifyContent="space-between" alignItems="center">
-              //     <Text
-              //       style={{ fontVariant: 'small-caps' }}
-              //       letterSpacing="2.4px"
-              //       color="gray.400"
-              //       mb={6}
-              //     >
-              //       {column.title} (0)
-              //     </Text>
-              //   </Flex>
-              // </GridItem>
-            );
+            return <Col key={column.id} column={column} />;
           })
         : null}
+
       {project.columns.length > 0 ? (
-        <GridItem
+        <Flex
           as={Link}
           to="new?resource=column"
-          display="flex"
+          borderRadius="md"
           alignItems="center"
           justifyContent="center"
           textStyle="h2"
@@ -109,7 +109,6 @@ export default function ProjectIndex() {
           transition="all 0.2s"
           color="_gray.400"
           _hover={{ color: '_gray.100', transform: 'scale(1.05)' }}
-          borderRadius="md"
           boxShadow="md"
           p={4}
           w="280px"
@@ -123,8 +122,8 @@ export default function ProjectIndex() {
           >
             New Column
           </Button>
-        </GridItem>
+        </Flex>
       ) : null}
-    </Grid>
+    </Flex>
   );
 }

@@ -1,7 +1,7 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
+import { Form, useActionData, useLoaderData } from '@remix-run/react';
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Text,
   Input,
   FormErrorMessage,
+  GridItem,
 } from '@chakra-ui/react';
 import { db } from '~/utils/db.server';
 import { getProject } from '~/models/project.server';
@@ -35,7 +36,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   });
 
   if (!projectId) {
-    throw json({ error: 'Project not found' }, { status: 404 });
+    return json({ error: 'Project not found' }, { status: 404 });
   }
 
   const formData = await request.formData();
@@ -43,7 +44,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   const title = String(formData.get('title'));
 
   if (!resource || !title) {
-    throw json({ error: 'More information required' }, { status: 400 });
+    return json({ error: 'Column needs a title' }, { status: 400 });
   }
 
   switch (resource) {
@@ -66,19 +67,26 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 export default function ProjectColumnNew() {
   const { resource } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  console.log('actionDataa', actionData);
+  const error = actionData?.error;
 
   return (
-    <Col>
+    <Box maxW="400px" mx="auto" mt={16}>
+      <Text textStyle="h2" mb={6}>
+        Add column
+      </Text>
       <Form method="post">
-        <Text>Add column</Text>
-        <FormControl isInvalid={true}>
-          <FormLabel>Title</FormLabel>
-          <Input name="title" placeholder="e.g. To do" />
-          <FormErrorMessage>Oops</FormErrorMessage>
-        </FormControl>
-        <input type="hidden" name="resource" value={resource} />
-        <Button type="submit">Create</Button>
+        <Flex flexDir="column" gap={6}>
+          <FormControl isInvalid={error}>
+            <FormLabel>Title</FormLabel>
+            <Input name="title" placeholder="e.g. To do" />
+            <FormErrorMessage>{error}</FormErrorMessage>
+            <input type="hidden" name="resource" value={resource} />
+          </FormControl>
+          <Button type="submit">Create</Button>
+        </Flex>
       </Form>
-    </Col>
+    </Box>
   );
 }
