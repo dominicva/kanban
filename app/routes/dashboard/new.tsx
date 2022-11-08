@@ -49,9 +49,6 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function NewProject() {
-  const submit = useSubmit();
-  // submit();
-  console.dir(submit);
   const actionResults = useActionData();
   const transition = useTransition();
 

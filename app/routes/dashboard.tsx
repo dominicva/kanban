@@ -21,7 +21,6 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 export default function ProjectsRoute() {
   const { projects, user } = useLoaderData<typeof loader>();
-  console.log('projects in dashboard.tsx', projects);
 
   return (
     <Grid gridTemplateColumns="250px 1fr">

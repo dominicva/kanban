@@ -9,7 +9,13 @@ export default function DashboardIndex() {
   return (
     <>
       {noProjectSelected ? (
-        <Flex flexDirection={'column'} alignItems={'center'} gap={8} mt={12}>
+        <Flex
+          flexDirection={'column'}
+          alignItems={'center'}
+          gap={8}
+          mt={12}
+          pos="relative"
+        >
           <Text textStyle="h2" color="_gray.500">
             No project selected. Pick one from the sidebar.
           </Text>

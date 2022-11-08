@@ -10,7 +10,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function IndexRoute() {
-  return <Box>Idex</Box>;
+  return (
+    <Box h="100vh" w="100vw" overflow="hidden">
+      Index
+    </Box>
+  );
 }
 
 export const ErrorBoundary = ({ error }: { error: Error }) => {

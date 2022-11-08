@@ -12,6 +12,7 @@ import {
   Input,
   FormErrorMessage,
   Select,
+  chakra,
 } from '@chakra-ui/react';
 import { db } from '~/utils/db.server';
 import { getProjectId } from '~/utils/session.server';
@@ -125,16 +126,32 @@ export default function ProjectColumnNew() {
           </FormControl>
 
           {resource === 'task' ? (
-            <FormControl>
-              <FormLabel>Status</FormLabel>
-              <Select name="column">
-                {columns?.columns.map(column => (
-                  <option key={column.id} value={column.title}>
-                    {column.title}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            <>
+              <FormControl id="description">
+                <FormLabel>Description</FormLabel>
+                <chakra.textarea
+                  name="description"
+                  width="100%"
+                  bg="transparent"
+                  border="1px solid"
+                  borderColor="inherit"
+                  borderRadius="md"
+                  p={2}
+                  rows={4}
+                  resize="none"
+                ></chakra.textarea>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Status</FormLabel>
+                <Select name="column">
+                  {columns?.columns.map(column => (
+                    <option key={column.id} value={column.title}>
+                      {column.title}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
           ) : null}
           <Button type="submit">Create</Button>
         </Flex>

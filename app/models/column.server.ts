@@ -1,6 +1,7 @@
 import type { Prisma, User, Project, Column } from '@prisma/client';
 import { json } from '@remix-run/node';
 import { db } from '~/utils/db.server';
+import { getUserId } from '~/utils/session.server';
 
 export const getAllColumns = async (projectId: Project['id']) => {
   return db.column.findMany({

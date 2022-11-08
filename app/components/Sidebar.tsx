@@ -36,6 +36,7 @@ export default function Sidebar({
       position="absolute"
       h="100vh"
       left={0}
+      top={0}
       bottom={0}
       zIndex={1}
       width="250px"
